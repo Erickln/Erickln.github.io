@@ -18,6 +18,8 @@ function renderTable() {
     
     filteredGames.forEach((game, index) => {
         const row = document.createElement('tr');
+        row.style.height = '15px !important';
+        row.style.lineHeight = '13px';
         row.innerHTML = `
             <td>${index + 1}</td>
             <td><img src="${game.imagen}" alt="${game.juego}" class="game-thumbnail"></td>

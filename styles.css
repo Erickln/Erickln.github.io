@@ -1,3 +1,22 @@
+:root {
+    --row-height: 80px;
+    --border-color: #444;
+    --border-width: 1px;
+    
+    /* Dark Mode Colors */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #3d3d3d;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --accent-color: #4CAF50;
+    --accent-hover: #45a049;
+    --danger-color: #e53935;
+    --danger-hover: #c62828;
+    --row-even: #252525;
+    --row-hover: #3a3a3a;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,28 +25,29 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #f5f5f5;
+    background-color: var(--bg-primary);
     padding: 10px;
+    color: var(--text-primary);
 }
 
 .container {
     max-width: 100%;
     margin: 0 auto;
-    background-color: white;
+    background-color: var(--bg-secondary);
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 h1 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;
 }
 
 h2 {
-    color: #555;
+    color: var(--text-secondary);
     margin-bottom: 15px;
     font-size: 18px;
 }
@@ -35,7 +55,7 @@ h2 {
 .filters-container {
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #f9f9f9;
+    background-color: var(--bg-tertiary);
     border-radius: 8px;
 }
 
@@ -48,14 +68,16 @@ h2 {
 .filter-input {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 14px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
 .filter-input:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: var(--accent-color);
 }
 
 .filter-group {
@@ -67,7 +89,7 @@ h2 {
 .filter-group label {
     font-weight: 600;
     font-size: 13px;
-    color: #555;
+    color: var(--text-secondary);
 }
 
 .filter-row {
@@ -78,16 +100,17 @@ h2 {
 .filter-operator {
     width: 60px;
     padding: 10px 5px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 14px;
-    background-color: white;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
     cursor: pointer;
 }
 
 .filter-operator:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: var(--accent-color);
 }
 
 .filter-row .filter-input {
@@ -101,7 +124,7 @@ h2 {
 .btn-clear {
     width: 100%;
     padding: 10px;
-    background-color: #f44336;
+    background-color: var(--danger-color);
     color: white;
     border: none;
     border-radius: 4px;
@@ -111,7 +134,7 @@ h2 {
 }
 
 .btn-clear:hover {
-    background-color: #da190b;
+    background-color: var(--danger-hover);
 }
 
 .table-container {
@@ -123,10 +146,12 @@ table {
     width: 100%;
     border-collapse: collapse;
     min-width: 800px;
+    border: var(--border-width) solid var(--border-color);
+    background-color: var(--bg-secondary);
 }
 
 thead {
-    background-color: #4CAF50;
+    background-color: var(--accent-color);
     color: white;
     position: sticky;
     top: 0;
@@ -139,6 +164,8 @@ th {
     font-weight: 600;
     font-size: 12px;
     white-space: nowrap;
+    border: var(--border-width) solid var(--border-color);
+    height: var(--row-height);
 }
 
 th.sortable {
@@ -147,13 +174,16 @@ th.sortable {
 }
 
 th.sortable:hover {
-    background-color: #45a049;
+    background-color: var(--accent-hover);
 }
 
 td {
     padding: 10px 8px;
-    border-bottom: 1px solid #ddd;
+    border: var(--border-width) solid var(--border-color);
     font-size: 13px;
+    height: var(--row-height);
+    vertical-align: middle;
+    color: var(--text-primary);
 }
 
 .game-thumbnail {
@@ -164,17 +194,17 @@ td {
 }
 
 tbody tr:hover {
-    background-color: #f5f5f5;
+    background-color: var(--row-hover);
 }
 
 tbody tr:nth-child(even) {
-    background-color: #fafafa;
+    background-color: var(--row-even);
 }
 
 .no-results {
     text-align: center;
     padding: 30px;
-    color: #999;
+    color: var(--text-secondary);
     font-size: 16px;
 }
 
