@@ -1,36 +1,6 @@
-// Datos de los juegos
-const games = [
-    {
-        caja: "Caja A-1",
-        juego: "7 Wonders Duel",
-        rank: "15",
-        complejidad: "2.22",
-        trata: "Juego de cartas de civilización y construcción de maravillas para dos jugadores",
-        calificacion: "8.1",
-        recomm_players: "2",
-        maxplayers: "2",
-        minplaytime: "30",
-        maxplaytime: "45",
-        minplayers: "2",
-        categoria: "Estrategia"
-    },
-    {
-        caja: "Caja B-3",
-        juego: "Brass: Birmingham",
-        rank: "2",
-        complejidad: "3.91",
-        trata: "Juego de construcción económica durante la Revolución Industrial en Inglaterra",
-        calificacion: "8.6",
-        recomm_players: "3-4",
-        maxplayers: "4",
-        minplaytime: "60",
-        maxplaytime: "120",
-        minplayers: "2",
-        categoria: "Económico"
-    }
-];
-
+// Los datos de los juegos se cargan desde games.js
 let filteredGames = [...games];
+let currentSort = { field: null, ascending: true };
 
 // Renderizar la tabla
 function renderTable() {
@@ -46,10 +16,11 @@ function renderTable() {
         noResults.style.display = 'none';
     }
     
-    filteredGames.forEach(game => {
+    filteredGames.forEach((game, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${game.caja}</td>
+            <td>${index + 1}</td>
+            <td><img src="${game.imagen}" alt="${game.juego}" class="game-thumbnail"></td>
             <td><strong>${game.juego}</strong></td>
             <td>${game.rank}</td>
             <td>${game.complejidad}</td>
@@ -61,8 +32,57 @@ function renderTable() {
             <td>${game.maxplaytime}</td>
             <td>${game.minplayers}</td>
             <td>${game.categoria}</td>
+            <td>${game.categoria2}</td>
+            <td>${game.categoria3}</td>
+            <td>${game.se_jugar}</td>
         `;
         tbody.appendChild(row);
+    });
+}
+
+// Ordenar tabla
+function sortTable(field) {
+    if (currentSort.field === field) {
+        currentSort.ascending = !currentSort.ascending;
+    } else {
+        currentSort.field = field;
+        currentSort.ascending = true;
+    }
+    
+    const numericFields = ['rank', 'complejidad', 'calificacion', 'recomm_players', 'maxplayers', 'minplaytime', 'maxplaytime', 'minplayers'];
+    const isNumeric = numericFields.includes(field);
+    
+    filteredGames.sort((a, b) => {
+        let valA = a[field];
+        let valB = b[field];
+        
+        if (isNumeric) {
+            valA = parseFloat(valA) || 0;
+            valB = parseFloat(valB) || 0;
+        } else {
+            valA = (valA || '').toLowerCase();
+            valB = (valB || '').toLowerCase();
+        }
+        
+        if (valA < valB) return currentSort.ascending ? -1 : 1;
+        if (valA > valB) return currentSort.ascending ? 1 : -1;
+        return 0;
+    });
+    
+    updateSortIndicators(field);
+    renderTable();
+}
+
+// Actualizar indicadores de ordenamiento
+function updateSortIndicators(activeField) {
+    document.querySelectorAll('.sortable').forEach(th => {
+        const field = th.dataset.sort;
+        const baseName = th.textContent.replace(/ [↕↑↓]$/, '');
+        if (field === activeField) {
+            th.textContent = baseName + (currentSort.ascending ? ' ↑' : ' ↓');
+        } else {
+            th.textContent = baseName + ' ↕';
+        }
     });
 }
 
@@ -135,10 +155,15 @@ document.querySelectorAll('.filter-input').forEach(input => {
 });
 
 document.getElementById('clear-filters').addEventListener('click', clearFilters);
-querySelectorAll('.filter-operator').forEach(select => {
+
+document.querySelectorAll('.filter-operator').forEach(select => {
     select.addEventListener('change', applyFilters);
 });
 
-document.
+// Event listeners para ordenamiento
+document.querySelectorAll('.sortable').forEach(th => {
+    th.addEventListener('click', () => sortTable(th.dataset.sort));
+});
+
 // Renderizar tabla inicial
 renderTable();

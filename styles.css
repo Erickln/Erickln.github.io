@@ -141,10 +141,26 @@ th {
     white-space: nowrap;
 }
 
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+th.sortable:hover {
+    background-color: #45a049;
+}
+
 td {
     padding: 10px 8px;
     border-bottom: 1px solid #ddd;
     font-size: 13px;
+}
+
+.game-thumbnail {
+    width: 75px;
+    height: 75px;
+    border-radius: 4px;
+    object-fit: cover;
 }
 
 tbody tr:hover {
