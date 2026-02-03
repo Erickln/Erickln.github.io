@@ -177,6 +177,10 @@ th.sortable:hover {
     background-color: var(--accent-hover);
 }
 
+.col-wide {
+    min-width: 300px;
+}
+
 td {
     padding: 10px 8px;
     border: var(--border-width) solid var(--border-color);
