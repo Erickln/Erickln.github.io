@@ -270,6 +270,16 @@ function clearFilters() {
     renderTable();
 }
 
+// Actualizar color del operador de filtro
+function updateOperatorColor(select) {
+    select.classList.remove('op-gte', 'op-lte', 'op-eq');
+    switch (select.value) {
+        case '>=': select.classList.add('op-gte'); break;
+        case '<=': select.classList.add('op-lte'); break;
+        case '=': select.classList.add('op-eq'); break;
+    }
+}
+
 // Event listeners
 document.querySelectorAll('.filter-input').forEach(input => {
     input.addEventListener('input', applyFilters);
@@ -278,7 +288,12 @@ document.querySelectorAll('.filter-input').forEach(input => {
 document.getElementById('clear-filters').addEventListener('click', clearFilters);
 
 document.querySelectorAll('.filter-operator').forEach(select => {
-    select.addEventListener('change', applyFilters);
+    select.addEventListener('change', () => {
+        updateOperatorColor(select);
+        applyFilters();
+    });
+    // Aplicar color inicial
+    updateOperatorColor(select);
 });
 
 // Event listeners para ordenamiento
