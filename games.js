@@ -72,7 +72,7 @@ const games = [
         "imagen": "https://cf.geekdo-images.com/74haNunMBn85beBi-yIKwA__square@2x/img/DyXuOGohHV4ZpGsTSpZOGhUjiXk=/150x150/filters:strip_icc()/pic8669313.png",
         "rank": "155",
         "complejidad": "1.036",
-        "trata": "Juego cooperativo de palabras. Todos escriben una pista para que uno adivine, ¡pero si repetís pista se borran! Cero estrés.",
+        "trata": "Juego cooperativo de palabras. Todos escriben una pista para que uno adivine, ¡pero si repiten pista se borran! Cero estrés.",
         "calificacion": "7.59799",
         "recomm_players": "7",
         "maxplayers": "7",

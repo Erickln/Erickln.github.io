@@ -10,6 +10,26 @@
     <div class="container">
         <h1>Colección de Juegos de Mesa</h1>
         
+        <button type="button" id="btn-instructions" class="btn-instructions">
+            📖 Presiona aquí para obtener instrucciones del uso de esta herramienta
+        </button>
+        
+        <div id="instructions-panel" class="instructions-panel" style="display: none;">
+            <div class="instructions-content">
+                <h3>📋 Instrucciones de Uso</h3>
+                <ul>
+                    <li><strong>🔍 Filtros:</strong> Usa los filtros para buscar juegos por rank, complejidad, número de jugadores, tiempo de juego o categoría.</li>
+                    <li><strong>🔢 Operadores:</strong> Presiona los botones (≥, ≤, =) para cambiar el tipo de comparación.</li>
+                    <li><strong>📊 Ordenar:</strong> Toca cualquier encabezado de columna con ↕ para ordenar la tabla.</li>
+                    <li><strong>⚙️ Columnas:</strong> Oculta o muestra columnas según tu preferencia.</li>
+                    <li><strong>❄️ Congelar:</strong> Fija columnas a la izquierda para que no se muevan al desplazarte.</li>
+                    <li><strong>🎨 Colores:</strong> Los colores van de verde (mejor) a rojo (peor) según cada métrica.</li>
+                    <li><strong>ℹ️ Categorías:</strong> Presiona el botón ℹ️ junto a "Categoría" para ver descripciones, o toca una categoría en la tabla.</li>
+                </ul>
+                <button type="button" id="close-instructions" class="btn-close-instructions">Entendido ✓</button>
+            </div>
+        </div>
+        
         <div class="filters-container">
             <h2>Filtros</h2>
             <div class="filters">
@@ -88,7 +108,7 @@
                 <label><input type="checkbox" data-col="3" checked> Rank</label>
                 <label><input type="checkbox" data-col="4" checked> Complejidad</label>
                 <label><input type="checkbox" data-col="5" checked> ¿De qué trata?</label>
-                <label><input type="checkbox" data-col="6" checked> Calificación</label>
+                <label><input type="checkbox" data-col="6"> Calificación</label>
                 <label><input type="checkbox" data-col="7" checked> Recomm Players</label>
                 <label><input type="checkbox" data-col="8" checked> Max Players</label>
                 <label><input type="checkbox" data-col="9" checked> Min Playtime</label>

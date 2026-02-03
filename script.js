@@ -493,7 +493,7 @@ document.querySelectorAll('.sortable').forEach(th => {
 });
 
 // ============ COLUMNAS OCULTAS ============
-let hiddenColumns = new Set();
+let hiddenColumns = new Set([6]); // Calificación oculta por defecto
 
 function applyColumnVisibility() {
     const table = document.getElementById('games-table');
@@ -549,12 +549,26 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Checkboxes de columnas
+// Checkboxes de columnas - con stopPropagation para evitar activar encabezados
 document.querySelectorAll('#columns-options input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    checkbox.addEventListener('change', (e) => {
+        e.stopPropagation();
         const colIndex = parseInt(checkbox.dataset.col);
         toggleColumnVisibility(colIndex, checkbox.checked);
     });
+});
+
+// Prevenir que clicks en el panel de columnas se propaguen
+document.getElementById('columns-options').addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+// Prevenir que clicks en el panel de congelar se propaguen
+document.getElementById('freeze-options').addEventListener('click', (e) => {
+    e.stopPropagation();
 });
 
 // ============ COLUMNAS CONGELADAS ============
@@ -825,6 +839,29 @@ document.addEventListener('click', (e) => {
         tooltip.style.display = 'none';
     }
 });
+
+// ============ PANEL DE INSTRUCCIONES ============
+function toggleInstructions(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const panel = document.getElementById('instructions-panel');
+    const isVisible = panel.style.display !== 'none';
+    panel.style.display = isVisible ? 'none' : 'block';
+}
+
+function closeInstructions(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('instructions-panel').style.display = 'none';
+}
+
+const instructionsBtn = document.getElementById('btn-instructions');
+instructionsBtn.addEventListener('click', toggleInstructions);
+instructionsBtn.addEventListener('touchend', toggleInstructions);
+
+const closeInstructionsBtn = document.getElementById('close-instructions');
+closeInstructionsBtn.addEventListener('click', closeInstructions);
+closeInstructionsBtn.addEventListener('touchend', closeInstructions);
 
 // Inicializar sliders, dropdown de categorías y ordenar por Juego al cargar
 calculateSliderRanges();
