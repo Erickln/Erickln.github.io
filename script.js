@@ -32,33 +32,79 @@ function getSeJugarColor(value) {
 }
 
 // Calcular percentiles para ignorar valores atípicos
-function calculatePercentiles(values, lower = 5, upper = 95) {
+function calculatePercentiles(values, lower = 50, upper = 95) {
     const sorted = [...values].filter(v => !isNaN(v)).sort((a, b) => a - b);
-    if (sorted.length === 0) return { min: 0, max: 1 };
-    const lowerIndex = Math.floor(sorted.length * lower / 100);
-    const upperIndex = Math.floor(sorted.length * upper / 100);
+    if (sorted.length === 0) return { min: 0, max: 1, mid: 0.5 };
+    
+    const getPercentileValue = (p) => {
+        const index = Math.floor(sorted.length * p / 100);
+        return sorted[Math.min(index, sorted.length - 1)];
+    };
+    
     return {
-        min: sorted[lowerIndex] || sorted[0],
-        max: sorted[upperIndex] || sorted[sorted.length - 1]
+        min: getPercentileValue(0),
+        mid: getPercentileValue(lower),  // Punto medio (amarillo) - percentil 50
+        max: getPercentileValue(upper)   // Rojo - percentil 95
     };
 }
 
 // Obtener color de gradiente para valores numéricos
+// Usa 3 colores: verde (mejor) → amarillo (medio) → rojo (peor)
 // invertir = true para rank (menor es mejor)
-function getGradientColor(value, min, max, invertir = false) {
+function getGradientColor(value, min, max, invertir = false, mid = null) {
     const num = parseFloat(value);
     if (isNaN(num)) return '#555555'; // Color por defecto si no es numérico
     
-    // Normalizar entre 0 y 1
-    let normalized = (num - min) / (max - min);
-    normalized = Math.max(0, Math.min(1, normalized)); // Clamp entre 0 y 1
+    // Si no hay punto medio, usar el promedio
+    if (mid === null) mid = (min + max) / 2;
     
-    if (invertir) normalized = 1 - normalized;
+    let normalized;
+    let r, g, b;
     
-    // Gradiente de rojo oscuro (malo) a verde oscuro (bueno)
-    const r = Math.round(139 * (1 - normalized) + 27 * normalized);
-    const g = Math.round(35 * (1 - normalized) + 94 * normalized);
-    const b = Math.round(35 * (1 - normalized) + 32 * normalized);
+    // Colores: verde (#1b5e20), amarillo oscuro (#b8860b - DarkGoldenrod), rojo (#b71c1c)
+    const verde = { r: 27, g: 94, b: 32 };
+    const amarillo = { r: 184, g: 134, b: 11 };
+    const rojo = { r: 183, g: 28, b: 28 };
+    
+    if (invertir) {
+        // Para rank: menor valor = verde, mid = amarillo, mayor = rojo
+        if (num <= min) {
+            return `rgb(${verde.r}, ${verde.g}, ${verde.b})`;
+        } else if (num >= max) {
+            return `rgb(${rojo.r}, ${rojo.g}, ${rojo.b})`;
+        } else if (num <= mid) {
+            // Interpolación verde → amarillo
+            normalized = (num - min) / (mid - min);
+            r = Math.round(verde.r + (amarillo.r - verde.r) * normalized);
+            g = Math.round(verde.g + (amarillo.g - verde.g) * normalized);
+            b = Math.round(verde.b + (amarillo.b - verde.b) * normalized);
+        } else {
+            // Interpolación amarillo → rojo
+            normalized = (num - mid) / (max - mid);
+            r = Math.round(amarillo.r + (rojo.r - amarillo.r) * normalized);
+            g = Math.round(amarillo.g + (rojo.g - amarillo.g) * normalized);
+            b = Math.round(amarillo.b + (rojo.b - amarillo.b) * normalized);
+        }
+    } else {
+        // Para calificación: mayor valor = verde, mid = amarillo, menor = rojo
+        if (num >= max) {
+            return `rgb(${verde.r}, ${verde.g}, ${verde.b})`;
+        } else if (num <= min) {
+            return `rgb(${rojo.r}, ${rojo.g}, ${rojo.b})`;
+        } else if (num >= mid) {
+            // Interpolación verde → amarillo
+            normalized = (max - num) / (max - mid);
+            r = Math.round(verde.r + (amarillo.r - verde.r) * normalized);
+            g = Math.round(verde.g + (amarillo.g - verde.g) * normalized);
+            b = Math.round(verde.b + (amarillo.b - verde.b) * normalized);
+        } else {
+            // Interpolación amarillo → rojo
+            normalized = (mid - num) / (mid - min);
+            r = Math.round(amarillo.r + (rojo.r - amarillo.r) * normalized);
+            g = Math.round(amarillo.g + (rojo.g - amarillo.g) * normalized);
+            b = Math.round(amarillo.b + (rojo.b - amarillo.b) * normalized);
+        }
+    }
     
     return `rgb(${r}, ${g}, ${b})`;
 }
@@ -73,7 +119,7 @@ function calculateColorRanges() {
     ranges.rank.invertir = true;
     
     // Complejidad (1-5, menor = más fácil = verde)
-    ranges.complejidad = { min: 1, max: 5, invertir: true };
+    ranges.complejidad = { min: 1, mid: 2.5, max: 5, invertir: true };
     
     // Calificación (mayor es mejor)
     const calificaciones = games.map(g => parseFloat(g.calificacion)).filter(v => !isNaN(v));
@@ -81,10 +127,10 @@ function calculateColorRanges() {
     ranges.calificacion.invertir = false;
     
     // Recomm players (neutral, usar escala)
-    ranges.recomm_players = { min: 1, max: 8, invertir: false };
+    ranges.recomm_players = { min: 1, mid: 4, max: 8, invertir: false };
     
     // Max players (más = verde para grupos grandes)
-    ranges.maxplayers = { min: 1, max: 10, invertir: false };
+    ranges.maxplayers = { min: 1, mid: 5, max: 10, invertir: false };
     
     // Min playtime (menor = más rápido = verde)
     const minPlaytimes = games.map(g => parseFloat(g.minplaytime)).filter(v => !isNaN(v));
@@ -97,7 +143,7 @@ function calculateColorRanges() {
     ranges.maxplaytime.invertir = true;
     
     // Min players (menor = más flexible = verde)
-    ranges.minplayers = { min: 1, max: 4, invertir: true };
+    ranges.minplayers = { min: 1, mid: 2, max: 4, invertir: true };
     
     return ranges;
 }
@@ -122,14 +168,14 @@ function renderTable() {
         const row = document.createElement('tr');
         
         // Calcular colores para cada columna numérica
-        const rankColor = getGradientColor(game.rank, colorRanges.rank.min, colorRanges.rank.max, colorRanges.rank.invertir);
-        const complejidadColor = getGradientColor(game.complejidad, colorRanges.complejidad.min, colorRanges.complejidad.max, colorRanges.complejidad.invertir);
-        const calificacionColor = getGradientColor(game.calificacion, colorRanges.calificacion.min, colorRanges.calificacion.max, colorRanges.calificacion.invertir);
-        const recommColor = getGradientColor(game.recomm_players, colorRanges.recomm_players.min, colorRanges.recomm_players.max, colorRanges.recomm_players.invertir);
-        const maxPlayersColor = getGradientColor(game.maxplayers, colorRanges.maxplayers.min, colorRanges.maxplayers.max, colorRanges.maxplayers.invertir);
-        const minPlaytimeColor = getGradientColor(game.minplaytime, colorRanges.minplaytime.min, colorRanges.minplaytime.max, colorRanges.minplaytime.invertir);
-        const maxPlaytimeColor = getGradientColor(game.maxplaytime, colorRanges.maxplaytime.min, colorRanges.maxplaytime.max, colorRanges.maxplaytime.invertir);
-        const minPlayersColor = getGradientColor(game.minplayers, colorRanges.minplayers.min, colorRanges.minplayers.max, colorRanges.minplayers.invertir);
+        const rankColor = getGradientColor(game.rank, colorRanges.rank.min, colorRanges.rank.max, colorRanges.rank.invertir, colorRanges.rank.mid);
+        const complejidadColor = getGradientColor(game.complejidad, colorRanges.complejidad.min, colorRanges.complejidad.max, colorRanges.complejidad.invertir, colorRanges.complejidad.mid);
+        const calificacionColor = getGradientColor(game.calificacion, colorRanges.calificacion.min, colorRanges.calificacion.max, colorRanges.calificacion.invertir, colorRanges.calificacion.mid);
+        const recommColor = getGradientColor(game.recomm_players, colorRanges.recomm_players.min, colorRanges.recomm_players.max, colorRanges.recomm_players.invertir, colorRanges.recomm_players.mid);
+        const maxPlayersColor = getGradientColor(game.maxplayers, colorRanges.maxplayers.min, colorRanges.maxplayers.max, colorRanges.maxplayers.invertir, colorRanges.maxplayers.mid);
+        const minPlaytimeColor = getGradientColor(game.minplaytime, colorRanges.minplaytime.min, colorRanges.minplaytime.max, colorRanges.minplaytime.invertir, colorRanges.minplaytime.mid);
+        const maxPlaytimeColor = getGradientColor(game.maxplaytime, colorRanges.maxplaytime.min, colorRanges.maxplaytime.max, colorRanges.maxplaytime.invertir, colorRanges.maxplaytime.mid);
+        const minPlayersColor = getGradientColor(game.minplayers, colorRanges.minplayers.min, colorRanges.minplayers.max, colorRanges.minplayers.invertir, colorRanges.minplayers.mid);
         
         // Colores para categorías
         const cat1Color = getCategoryColor(game.categoria);
@@ -177,9 +223,20 @@ function sortTable(field) {
         let valA = a[field];
         let valB = b[field];
         
+        // N/A siempre al final
+        const aIsNA = valA === 'N/A' || valA === '' || valA === null || valA === undefined;
+        const bIsNA = valB === 'N/A' || valB === '' || valB === null || valB === undefined;
+        
+        if (aIsNA && bIsNA) return 0;
+        if (aIsNA) return 1;  // A va al final
+        if (bIsNA) return -1; // B va al final
+        
         if (isNumeric) {
-            valA = parseFloat(valA) || 0;
-            valB = parseFloat(valB) || 0;
+            valA = parseFloat(valA);
+            valB = parseFloat(valB);
+            // Si después de parsear es NaN, tratar como N/A
+            if (isNaN(valA)) return 1;
+            if (isNaN(valB)) return -1;
         } else {
             valA = (valA || '').toLowerCase();
             valB = (valB || '').toLowerCase();
@@ -242,13 +299,19 @@ function applyFilters() {
     };
     
     filteredGames = games.filter(game => {
+        // Para categoría, buscar en las 3 columnas
+        const matchesCategory = filters.categoria === '' || 
+            game.categoria.toLowerCase() === filters.categoria ||
+            (game.categoria2 && game.categoria2.toLowerCase() === filters.categoria) ||
+            (game.categoria3 && game.categoria3.toLowerCase() === filters.categoria);
+        
         return (
             compareValues(game.rank, filters.rank, filters.rankOp) &&
             compareValues(game.complejidad, filters.complejidad, filters.complejidadOp) &&
             compareValues(game.minplayers, filters.minplayers, filters.minplayersOp) &&
             compareValues(game.maxplayers, filters.maxplayers, filters.maxplayersOp) &&
             compareValues(game.maxplaytime, filters.maxplaytime, filters.maxplaytimeOp) &&
-            game.categoria.toLowerCase().includes(filters.categoria)
+            matchesCategory
         );
     });
     
@@ -352,6 +415,32 @@ function syncInputToSlider(input) {
     }
 }
 
+// Poblar dropdown de categorías con valores únicos
+function populateCategoryDropdown() {
+    const categorySelect = document.getElementById('filter-categoria');
+    
+    // Obtener todas las categorías únicas de las 3 columnas
+    const allCategories = new Set();
+    games.forEach(game => {
+        if (game.categoria) allCategories.add(game.categoria);
+        if (game.categoria2) allCategories.add(game.categoria2);
+        if (game.categoria3) allCategories.add(game.categoria3);
+    });
+    
+    // Ordenar alfabéticamente
+    const sortedCategories = Array.from(allCategories).sort((a, b) => 
+        a.localeCompare(b, 'es', { sensitivity: 'base' })
+    );
+    
+    // Agregar opciones al select
+    sortedCategories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.toLowerCase();
+        option.textContent = cat;
+        categorySelect.appendChild(option);
+    });
+}
+
 // Event listeners
 document.querySelectorAll('.filter-input').forEach(input => {
     input.addEventListener('input', () => {
@@ -359,6 +448,9 @@ document.querySelectorAll('.filter-input').forEach(input => {
         applyFilters();
     });
 });
+
+// Event listener específico para el dropdown de categoría
+document.getElementById('filter-categoria').addEventListener('change', applyFilters);
 
 document.getElementById('clear-filters').addEventListener('click', clearFilters);
 
@@ -379,6 +471,7 @@ document.querySelectorAll('.sortable').forEach(th => {
     th.addEventListener('click', () => sortTable(th.dataset.sort));
 });
 
-// Inicializar sliders y ordenar por Juego al cargar
+// Inicializar sliders, dropdown de categorías y ordenar por Juego al cargar
 calculateSliderRanges();
+populateCategoryDropdown();
 sortTable('juego');
