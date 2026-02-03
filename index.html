@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colección de Juegos de Mesa</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Colección de Juegos de Mesa</h1>
+        
+        <div class="filters-container">
+            <h2>Filtros</h2>
+            <div class="filters">
+                <input type="text" id="filter-caja" placeholder="Filtrar por Caja" class="filter-input">
+                <input type="text" id="filter-juego" placeholder="Filtrar por Juego" class="filter-input">
+                <input type="text" id="filter-rank" placeholder="Filtrar por Rank" class="filter-input">
+                <input type="text" id="filter-complejidad" placeholder="Filtrar por Complejidad" class="filter-input">
+                <input type="text" id="filter-trata" placeholder="Filtrar por ¿De qué trata?" class="filter-input">
+                <input type="text" id="filter-calificacion" placeholder="Filtrar por Calificación Público" class="filter-input">
+                <input type="text" id="filter-recomm" placeholder="Filtrar por Recomm Players" class="filter-input">
+                <input type="text" id="filter-maxplayers" placeholder="Filtrar por Max Players" class="filter-input">
+                <input type="text" id="filter-minplaytime" placeholder="Filtrar por Min Playtime" class="filter-input">
+                <input type="text" id="filter-maxplaytime" placeholder="Filtrar por Max Playtime" class="filter-input">
+                <input type="text" id="filter-minplayers" placeholder="Filtrar por Min Players" class="filter-input">
+                <input type="text" id="filter-categoria" placeholder="Filtrar por Categoría Principal" class="filter-input">
+                <button id="clear-filters" class="btn-clear">Limpiar Filtros</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="games-table">
+                <thead>
+                    <tr>
+                        <th>Caja</th>
+                        <th>Juego</th>
+                        <th>Rank</th>
+                        <th>Complejidad</th>
+                        <th>¿De qué trata?</th>
+                        <th>Calificación Público</th>
+                        <th>Recomm Players</th>
+                        <th>Max Players</th>
+                        <th>Min Playtime</th>
+                        <th>Max Playtime</th>
+                        <th>Min Players</th>
+                        <th>Categoría Principal</th>
+                    </tr>
+                </thead>
+                <tbody id="games-tbody">
+                    <!-- Los datos se cargarán dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="no-results" class="no-results" style="display: none;">
+            No se encontraron juegos con los filtros aplicados.
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
