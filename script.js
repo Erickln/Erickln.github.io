@@ -140,9 +140,9 @@ function renderTable() {
         const seJugarColor = getSeJugarColor(game.se_jugar);
         
         row.innerHTML = `
-            <td>${index + 1}</td>
+            <td><strong style="font-size: 1.6em">${index + 1}</strong></td>
             <td><img src="${game.imagen}" alt="${game.juego}" class="game-thumbnail"></td>
-            <td><strong>${game.juego}</strong></td>
+            <td><strong style="font-size: 1.2em">${game.juego}</strong></td>
             <td style="background-color: ${rankColor}">${game.rank}</td>
             <td style="background-color: ${complejidadColor}">${game.complejidad}</td>
             <td>${game.trata}</td>
