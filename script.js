@@ -710,7 +710,7 @@ const categoryDescriptions = {
     },
     'GAMBLING': {
         desc: '<img src="https://media.tenor.com/xy2XPgbXW7cAAAAM/bumbur95-gamba.gif" alt="GAMBLING" style="max-width: 100%; height: auto;">',
-        ejemplo: ''
+        ejemplo: "LET'S GO GAMBLING!!!"
     }
 };
 
