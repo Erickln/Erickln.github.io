@@ -188,6 +188,14 @@ function renderTable() {
         // Formatear complejidad a 1 decimal
         const complejidadFormatted = isNaN(parseFloat(game.complejidad)) ? game.complejidad : parseFloat(game.complejidad).toFixed(1);
         
+        // Función para mostrar categoría o GIF de GAMBLING
+        const formatCategory = (cat) => {
+            if (cat === 'GAMBLING') {
+                return '<img src="https://media.tenor.com/xy2XPgbXW7cAAAAM/bumbur95-gamba.gif" alt="GAMBLING" class="gambling-gif">';
+            }
+            return cat || '';
+        };
+        
         row.innerHTML = `
             <td data-col="0"><strong style="font-size: 1.6em">${index + 1}</strong></td>
             <td data-col="1"><img src="${game.imagen}" alt="${game.juego}" class="game-thumbnail"></td>
@@ -201,9 +209,9 @@ function renderTable() {
             <td data-col="9" style="background-color: ${minPlaytimeColor}">${game.minplaytime}</td>
             <td data-col="10" style="background-color: ${maxPlaytimeColor}">${game.maxplaytime}</td>
             <td data-col="11" style="background-color: ${minPlayersColor}">${game.minplayers}</td>
-            <td data-col="12" data-category="${game.categoria}" style="background-color: ${cat1Color}">${game.categoria}</td>
-            <td data-col="13" data-category="${game.categoria2}" style="background-color: ${cat2Color}">${game.categoria2}</td>
-            <td data-col="14" data-category="${game.categoria3}" style="background-color: ${cat3Color}">${game.categoria3}</td>
+            <td data-col="12" data-category="${game.categoria}" style="background-color: ${cat1Color}">${formatCategory(game.categoria)}</td>
+            <td data-col="13" data-category="${game.categoria2}" style="background-color: ${cat2Color}">${formatCategory(game.categoria2)}</td>
+            <td data-col="14" data-category="${game.categoria3}" style="background-color: ${cat3Color}">${formatCategory(game.categoria3)}</td>
             <td data-col="15" style="background-color: ${seJugarColor}">${game.se_jugar}</td>
         `;
         tbody.appendChild(row);
@@ -608,35 +616,102 @@ document.querySelectorAll('input[name="freeze-col"]').forEach(radio => {
 
 // ============ DESCRIPCIONES DE CATEGORÍAS ============
 const categoryDescriptions = {
-    'Estrategia': 'Juegos que requieren planificación a largo plazo, toma de decisiones y gestión de recursos. El azar tiene poco impacto.',
-    'Draft': 'Mecánica donde los jugadores seleccionan cartas o elementos de un conjunto común, pasando el resto al siguiente jugador.',
-    'Abstracto': 'Juegos con reglas simples pero profundidad estratégica. Generalmente sin tema o con tema mínimo.',
-    'Economía': 'Juegos centrados en la gestión de dinero, comercio, inversiones y desarrollo económico.',
-    'Construcción de Motores': 'Juegos donde construyes un sistema que se vuelve más eficiente con el tiempo, generando más recursos o acciones.',
-    'Construcción de Mazos': 'Empiezas con un mazo básico y lo mejoras comprando nuevas cartas durante la partida.',
-    'Familiar': 'Juegos accesibles para todas las edades, reglas sencillas y partidas relativamente cortas.',
-    'Palabras': 'Juegos basados en vocabulario, deletreo o asociación de palabras.',
-    'Juego de Cartas': 'Juegos donde las cartas son el componente principal de la mecánica.',
-    'Tentando a la Suerte': 'Juegos donde el azar juega un papel importante y los jugadores arriesgan para obtener mejores resultados.',
-    'Cooperativo': 'Todos los jugadores trabajan juntos contra el juego para lograr un objetivo común.',
-    'Deducción': 'Juegos donde debes descubrir información oculta mediante pistas y razonamiento lógico.',
-    'Dados': 'Juegos donde los dados son el componente principal para determinar resultados.',
-    'Party Game': 'Juegos sociales para grupos grandes, enfocados en la diversión y la interacción.',
-    'Colección de Sets': 'Juegos donde el objetivo es reunir conjuntos específicos de elementos para obtener puntos.',
-    'Roll and Write': 'Juegos donde tiras dados y marcas resultados en una hoja de papel.',
-    'Narrativo': 'Juegos que cuentan una historia, donde las decisiones de los jugadores afectan la narrativa.',
-    'Temático': 'Juegos con una ambientación fuerte donde el tema está integrado en las mecánicas.',
-    'Puzzle': 'Juegos que presentan desafíos lógicos o espaciales que resolver.',
-    'Área Control': 'Juegos donde los jugadores compiten por controlar regiones del tablero.',
-    'Negociación': 'Juegos donde el comercio y los acuerdos entre jugadores son fundamentales.',
-    'Bluffing': 'Juegos donde engañar a los oponentes es parte de la estrategia.',
-    'Dexterity': 'Juegos que requieren habilidad física o coordinación mano-ojo.',
-    'Legacy': 'Juegos que cambian permanentemente entre partidas, con decisiones que afectan futuras sesiones.',
-    'Worker Placement': 'Colocas trabajadores en espacios de acción limitados para obtener recursos o realizar acciones.',
-    'Tile Placement': 'Juegos donde colocas fichas o losetas para construir el tablero durante la partida.',
-    'Social Deduction': 'Juegos donde algunos jugadores tienen roles ocultos y otros deben descubrirlos.',
-    'Racing': 'Juegos donde el objetivo es llegar primero a la meta.',
-    'Trivia': 'Juegos de preguntas y respuestas sobre conocimientos generales o específicos.'
+    'Abstracto': {
+        desc: 'Información perfecta y sin azar; el reto es puramente mental y espacial.',
+        ejemplo: 'Visualizar tres movimientos por adelantado para rodear una ficha enemiga.'
+    },
+    'Bazas': {
+        desc: 'Gestión de jerarquías numéricas o de "palos" para ganar el control de la mesa ronda a ronda.',
+        ejemplo: 'Guardar tu carta de triunfo (as) para capturar los puntos de los rivales en el momento clave.'
+    },
+    'Colección de Sets': {
+        desc: 'Reconocimiento de patrones para agrupar ítems específicos que valen más juntos que separados.',
+        ejemplo: 'Ignorar una carta valiosa solitaria para buscar la tercera carta verde que completa tu trío.'
+    },
+    'Colocación de Losetas': {
+        desc: 'Construcción progresiva del terreno de juego encajando piezas geométricas.',
+        ejemplo: 'Girar una loseta hexagonal varias veces hasta que el dibujo del río coincida con el del tablero.'
+    },
+    'Construcción de Mazos': {
+        desc: 'Optimización de probabilidades reciclando tu propia pila de descarte con mejores cartas.',
+        ejemplo: 'Comprar una carta que te permite robar dos cartas extra cada vez que vuelva a salir.'
+    },
+    'Construcción de Motores': {
+        desc: 'Inversión exponencial: creas una infraestructura que produce más recursos automáticamente.',
+        ejemplo: 'Usar el hierro que produjiste en el turno 1 para construir una mina que te dará el doble en el turno 2.'
+    },
+    'Cooperativo': {
+        desc: 'Coordinación grupal y sacrificio individual para vencer a la inteligencia artificial del juego.',
+        ejemplo: 'Debatir quién debe gastar su carta curativa para salvar al equipo de perder la partida.'
+    },
+    'Dados': {
+        desc: 'Gestión de probabilidades y mitigación del azar mediante resultados numéricos aleatorios.',
+        ejemplo: 'Relanzar un dado esperando un "6", sabiendo que si sale un "1" pierdes el turno.'
+    },
+    'Deducción Social': {
+        desc: 'Lectura de lenguaje corporal y análisis lógico para encontrar discrepancias en los relatos.',
+        ejemplo: 'Notar que un amigo está demasiado callado y acusarlo de ser el traidor ante el grupo.'
+    },
+    'Destreza': {
+        desc: 'Control de motricidad fina y pulso en un entorno físico real.',
+        ejemplo: 'Colocar una pieza de madera con mucho cuidado en una torre inestable sin respirar.'
+    },
+    'Draft': {
+        desc: 'Selección táctica de recursos limitados, negando oportunidades a los rivales al mismo tiempo.',
+        ejemplo: 'Quedarte con la única carta que necesita tu vecino para completar su jugada, aunque a ti no te sirva.'
+    },
+    'Economía': {
+        desc: 'Balance eficiente entre ingresos, gastos e inversiones para maximizar el capital.',
+        ejemplo: 'Pedir un préstamo en el juego para comprar una fábrica antes de que suba de precio.'
+    },
+    'Estrategia': {
+        desc: 'Planificación a largo plazo priorizando la victoria final sobre las ganancias inmediatas.',
+        ejemplo: 'Perder una batalla pequeña a propósito para posicionar tus tropas en un lugar mejor.'
+    },
+    'Familiar': {
+        desc: 'Accesibilidad universal con reglas que equilibran la habilidad y la suerte para nivelar el campo.',
+        ejemplo: 'Jugar una carta de efecto simple que cambia el líder de la partida instantáneamente.'
+    },
+    'Faroleo': {
+        desc: 'Psicología inversa y engaño directo para intimidar o confundir a los oponentes.',
+        ejemplo: 'Subir la apuesta con una sonrisa confiada aunque tengas las peores cartas de la mesa.'
+    },
+    'Fiesta': {
+        desc: 'Generación de caos controlado y dinámicas sociales rápidas para romper el hielo.',
+        ejemplo: 'Gritar una respuesta absurda rápidamente antes de que se acabe el tiempo del reloj de arena.'
+    },
+    'Gestión de Mano': {
+        desc: 'Administración de recursos (cartas) limitados, decidiendo cuándo es el momento óptimo de gastarlos.',
+        ejemplo: 'Aguantar una carta defensiva durante 5 turnos esperando el ataque final del oponente.'
+    },
+    'Juego de Cartas': {
+        desc: 'Uso de naipes como vehículo principal para ejecutar todas las reglas y mecánicas.',
+        ejemplo: 'Barajar el mazo y repartir una nueva mano para reiniciar las opciones tácticas.'
+    },
+    '"Take That"': {
+        desc: 'Interacción agresiva directa destinada a sabotear o robar a quien va ganando.',
+        ejemplo: 'Jugar una carta de "Robo" para quitarle al líder el objeto que estaba a punto de usar para ganar.'
+    },
+    'Tentando a la Suerte': {
+        desc: 'Evaluación de riesgo/recompensa donde la avaricia puede llevar a perderlo todo.',
+        ejemplo: 'Decidir sacar "solo una carta más" del mazo, arriesgándote a que salga la bomba que te elimina.'
+    },
+    'Memoria': {
+        desc: 'Retención y evocación de información visual o espacial para tomar decisiones informadas.',
+        ejemplo: 'Recordar la ubicación de las fichas volteadas para hacer pares en el menor número de turnos.'
+    },
+    'Palabras': {
+        desc: 'Formación de vocablos a partir de letras limitadas para maximizar puntos y bloquear rivales.',
+        ejemplo: 'Colocar una palabra larga que cruce varias palabras ya existentes en el tablero.'
+    },
+    'Take That (Ataque)': {
+        desc: 'Mecánica donde los jugadores pueden atacar o perjudicar a otros directamente.',
+        ejemplo: 'Usar una carta que obliga a otro jugador a perder su próximo turno.'
+    },
+    'GAMBLING': {
+        desc: '<img src="https://media.tenor.com/xy2XPgbXW7cAAAAM/bumbur95-gamba.gif" alt="GAMBLING" style="max-width: 100%; height: auto;">',
+        ejemplo: ''
+    }
 };
 
 // Poblar modal de descripciones
@@ -655,12 +730,24 @@ function populateCategoryDescriptions() {
         a.localeCompare(b, 'es', { sensitivity: 'base' })
     );
     
-    container.innerHTML = sortedCategories.map(cat => `
-        <div class="category-item">
-            <div class="category-name">${cat}</div>
-            <div class="category-desc">${categoryDescriptions[cat] || 'Descripción no disponible.'}</div>
-        </div>
-    `).join('');
+    container.innerHTML = sortedCategories.map(cat => {
+        const info = categoryDescriptions[cat];
+        if (!info) {
+            return `
+                <div class="category-item">
+                    <div class="category-name">${cat}</div>
+                    <div class="category-desc">Descripción no disponible.</div>
+                </div>
+            `;
+        }
+        return `
+            <div class="category-item">
+                <div class="category-name">${cat}</div>
+                <div class="category-desc">${info.desc}</div>
+                <div class="category-ejemplo"><strong>💡 Ejemplo:</strong> ${info.ejemplo}</div>
+            </div>
+        `;
+    }).join('');
 }
 
 // Mostrar/ocultar modal
@@ -683,13 +770,15 @@ const tooltip = document.getElementById('category-tooltip');
 let tooltipTimeout;
 
 function showCategoryTooltip(e, category) {
-    if (!category || !categoryDescriptions[category]) return;
+    const info = categoryDescriptions[category];
+    if (!category || !info) return;
     
     clearTimeout(tooltipTimeout);
     
     tooltip.innerHTML = `
         <div class="category-name">${category}</div>
-        <div class="category-desc">${categoryDescriptions[category]}</div>
+        <div class="category-desc">${info.desc}</div>
+        <div class="category-ejemplo"><strong>💡</strong> ${info.ejemplo}</div>
     `;
     
     // Posicionar tooltip
