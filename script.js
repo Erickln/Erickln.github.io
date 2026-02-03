@@ -286,5 +286,5 @@ document.querySelectorAll('.sortable').forEach(th => {
     th.addEventListener('click', () => sortTable(th.dataset.sort));
 });
 
-// Renderizar tabla inicial
-renderTable();
+// Ordenar por Juego al cargar y renderizar tabla inicial
+sortTable('juego');
