@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colección de Juegos de Mesa</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Colección de Juegos de Mesa</h1>
+        
+        <button type="button" id="btn-instructions" class="btn-instructions">
+            📖 Presiona aquí para obtener instrucciones del uso de esta herramienta
+        </button>
+        
+        <div id="instructions-panel" class="instructions-panel" style="display: none;">
+            <div class="instructions-content">
+                <h3>📋 Instrucciones de Uso</h3>
+                <ul>
+                    <li><strong>🔍 Filtros:</strong> Usa los filtros para buscar juegos por rank, complejidad, número de jugadores, tiempo de juego o categoría.</li>
+                    <li><strong>🔢 Operadores:</strong> Presiona los botones (≥, ≤, =) para cambiar el tipo de comparación.</li>
+                    <li><strong>📊 Ordenar:</strong> Toca cualquier encabezado de columna con ↕ para ordenar la tabla.</li>
+                    <li><strong>⚙️ Columnas:</strong> Oculta o muestra columnas según tu preferencia.</li>
+                    <li><strong>❄️ Congelar:</strong> Fija columnas a la izquierda para que no se muevan al desplazarte.</li>
+                    <li><strong>🎨 Colores:</strong> Los colores van de verde (mejor) a rojo (peor) según cada métrica.</li>
+                    <li><strong>ℹ️ Categorías:</strong> Presiona el botón ℹ️ junto a "Categoría" para ver descripciones, o toca una categoría en la tabla.</li>
+                </ul>
+                <button type="button" id="close-instructions" class="btn-close-instructions">Entendido ✓</button>
+            </div>
+        </div>
+        
+        <div class="filters-container">
+            <h2>Filtros</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Rank</label>
+                    <div class="filter-row">
+                        <button type="button" id="filter-rank-op" class="filter-operator op-gte" data-value=">=">≥</button>
+                        <input type="number" id="filter-rank" placeholder="Valor" class="filter-input">
+                    </div>
+                    <input type="range" id="slider-rank" class="filter-slider" data-target="filter-rank">
+                </div>
+                <div class="filter-group">
+                    <label>Complejidad</label>
+                    <div class="filter-row">
+                        <button type="button" id="filter-complejidad-op" class="filter-operator op-gte" data-value=">=">≥</button>
+                        <input type="number" step="0.01" id="filter-complejidad" placeholder="Valor" class="filter-input">
+                    </div>
+                    <input type="range" id="slider-complejidad" class="filter-slider" data-target="filter-complejidad" step="0.1">
+                </div>
+                <div class="filter-group">
+                    <label>Min Jugadores</label>
+                    <div class="filter-row">
+                        <button type="button" id="filter-minplayers-op" class="filter-operator op-gte" data-value=">=">≥</button>
+                        <input type="number" id="filter-minplayers" placeholder="Valor" class="filter-input">
+                    </div>
+                    <input type="range" id="slider-minplayers" class="filter-slider" data-target="filter-minplayers">
+                </div>
+                <div class="filter-group">
+                    <label>Max Jugadores</label>
+                    <div class="filter-row">
+                        <button type="button" id="filter-maxplayers-op" class="filter-operator op-gte" data-value=">=">≥</button>
+                        <input type="number" id="filter-maxplayers" placeholder="Valor" class="filter-input">
+                    </div>
+                    <input type="range" id="slider-maxplayers" class="filter-slider" data-target="filter-maxplayers">
+                </div>
+                <div class="filter-group">
+                    <label>Max Tiempo</label>
+                    <div class="filter-row">
+                        <button type="button" id="filter-maxplaytime-op" class="filter-operator op-gte" data-value=">=">≥</button>
+                        <input type="number" id="filter-maxplaytime" placeholder="Valor" class="filter-input">
+                    </div>
+                    <input type="range" id="slider-maxplaytime" class="filter-slider" data-target="filter-maxplaytime">
+                </div>
+                <div class="filter-group">
+                    <label>Categoría <button type="button" id="btn-category-help" class="btn-help">ℹ️</button></label>
+                    <select id="filter-categoria" class="filter-input filter-full">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+                <button id="clear-filters" class="btn-clear">Limpiar Filtros</button>
+            </div>
+        </div>
+
+        <!-- Modal de descripciones de categorías -->
+        <div id="category-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>🎲 Descripción de Categorías</h3>
+                    <button type="button" id="close-category-modal" class="modal-close">✕</button>
+                </div>
+                <div class="modal-body" id="category-descriptions">
+                    <!-- Las descripciones se cargarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tooltip para categorías en la tabla -->
+        <div id="category-tooltip" class="category-tooltip" style="display: none;"></div>
+
+        <div class="columns-panel">
+            <button id="toggle-columns-panel" class="btn-columns">⚙️ Columnas</button>
+            <div id="columns-options" class="columns-options" style="display: none;">
+                <label><input type="checkbox" data-col="0" checked> #</label>
+                <label><input type="checkbox" data-col="1" checked> Imagen</label>
+                <label><input type="checkbox" data-col="2" checked> Juego</label>
+                <label><input type="checkbox" data-col="3" checked> Rank</label>
+                <label><input type="checkbox" data-col="4" checked> Complejidad</label>
+                <label><input type="checkbox" data-col="5" checked> ¿De qué trata?</label>
+                <label><input type="checkbox" data-col="6"> Calificación</label>
+                <label><input type="checkbox" data-col="7" checked> Recomm Players</label>
+                <label><input type="checkbox" data-col="8" checked> Max Players</label>
+                <label><input type="checkbox" data-col="9" checked> Min Playtime</label>
+                <label><input type="checkbox" data-col="10" checked> Max Playtime</label>
+                <label><input type="checkbox" data-col="11" checked> Min Players</label>
+                <label><input type="checkbox" data-col="12" checked> Cat. Principal</label>
+                <label><input type="checkbox" data-col="13" checked> Cat. Secundaria</label>
+                <label><input type="checkbox" data-col="14" checked> Cat. Terciaria</label>
+                <label><input type="checkbox" data-col="15" checked> Sé jugarlo</label>
+            </div>
+            
+            <button id="toggle-freeze-panel" class="btn-columns">❄️ Congelar</button>
+            <div id="freeze-options" class="columns-options freeze-options" style="display: none;">
+                <p class="freeze-hint">Congelar columnas hasta:</p>
+                <label><input type="radio" name="freeze-col" value="-1" checked> Ninguna</label>
+                <label><input type="radio" name="freeze-col" value="0"> #</label>
+                <label><input type="radio" name="freeze-col" value="1"> Imagen</label>
+                <label><input type="radio" name="freeze-col" value="2"> Juego</label>
+                <label><input type="radio" name="freeze-col" value="3"> Rank</label>
+                <label><input type="radio" name="freeze-col" value="4"> Complejidad</label>
+                <label><input type="radio" name="freeze-col" value="5"> ¿De qué trata?</label>
+                <label><input type="radio" name="freeze-col" value="6"> Calificación</label>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="games-table">
+                <thead>
+                    <tr>
+                        <th data-col="0">#</th>
+                        <th data-col="1">Imagen</th>
+                        <th data-col="2" class="sortable" data-sort="juego">Juego ↕</th>
+                        <th data-col="3" class="sortable" data-sort="rank">Rank ↕</th>
+                        <th data-col="4" class="sortable" data-sort="complejidad">Complejidad ↕</th>
+                        <th data-col="5" class="sortable col-wide" data-sort="trata">¿De qué trata? ↕</th>
+                        <th data-col="6" class="sortable" data-sort="calificacion">Calificación ↕</th>
+                        <th data-col="7" class="sortable" data-sort="recomm_players">Recomm Players ↕</th>
+                        <th data-col="8" class="sortable" data-sort="maxplayers">Max Players ↕</th>
+                        <th data-col="9" class="sortable" data-sort="minplaytime">Min Playtime ↕</th>
+                        <th data-col="10" class="sortable" data-sort="maxplaytime">Max Playtime ↕</th>
+                        <th data-col="11" class="sortable" data-sort="minplayers">Min Players ↕</th>
+                        <th data-col="12" class="sortable" data-sort="categoria">Cat. Principal ↕</th>
+                        <th data-col="13" class="sortable" data-sort="categoria2">Cat. Secundaria ↕</th>
+                        <th data-col="14" class="sortable" data-sort="categoria3">Cat. Terciaria ↕</th>
+                        <th data-col="15" class="sortable" data-sort="se_jugar">Sé jugarlo ↕</th>
+                    </tr>
+                </thead>
+                <tbody id="games-tbody">
+                    <!-- Los datos se cargarán dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="no-results" class="no-results" style="display: none;">
+            No se encontraron juegos con los filtros aplicados.
+        </div>
+    </div>
+
+    <script src="games.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
