@@ -185,26 +185,33 @@ function renderTable() {
         // Color para "Sé jugarlo"
         const seJugarColor = getSeJugarColor(game.se_jugar);
         
+        // Formatear complejidad a 1 decimal
+        const complejidadFormatted = isNaN(parseFloat(game.complejidad)) ? game.complejidad : parseFloat(game.complejidad).toFixed(1);
+        
         row.innerHTML = `
-            <td><strong style="font-size: 1.6em">${index + 1}</strong></td>
-            <td><img src="${game.imagen}" alt="${game.juego}" class="game-thumbnail"></td>
-            <td><strong style="font-size: 1.2em">${game.juego}</strong></td>
-            <td style="background-color: ${rankColor}">${game.rank}</td>
-            <td style="background-color: ${complejidadColor}">${game.complejidad}</td>
-            <td>${game.trata}</td>
-            <td style="background-color: ${calificacionColor}">${game.calificacion}</td>
-            <td style="background-color: ${recommColor}">${game.recomm_players}</td>
-            <td style="background-color: ${maxPlayersColor}">${game.maxplayers}</td>
-            <td style="background-color: ${minPlaytimeColor}">${game.minplaytime}</td>
-            <td style="background-color: ${maxPlaytimeColor}">${game.maxplaytime}</td>
-            <td style="background-color: ${minPlayersColor}">${game.minplayers}</td>
-            <td style="background-color: ${cat1Color}">${game.categoria}</td>
-            <td style="background-color: ${cat2Color}">${game.categoria2}</td>
-            <td style="background-color: ${cat3Color}">${game.categoria3}</td>
-            <td style="background-color: ${seJugarColor}">${game.se_jugar}</td>
+            <td data-col="0"><strong style="font-size: 1.6em">${index + 1}</strong></td>
+            <td data-col="1"><img src="${game.imagen}" alt="${game.juego}" class="game-thumbnail"></td>
+            <td data-col="2"><strong style="font-size: 1.2em">${game.juego}</strong></td>
+            <td data-col="3" style="background-color: ${rankColor}">${game.rank}</td>
+            <td data-col="4" style="background-color: ${complejidadColor}">${complejidadFormatted}</td>
+            <td data-col="5">${game.trata}</td>
+            <td data-col="6" style="background-color: ${calificacionColor}">${game.calificacion}</td>
+            <td data-col="7" style="background-color: ${recommColor}">${game.recomm_players}</td>
+            <td data-col="8" style="background-color: ${maxPlayersColor}">${game.maxplayers}</td>
+            <td data-col="9" style="background-color: ${minPlaytimeColor}">${game.minplaytime}</td>
+            <td data-col="10" style="background-color: ${maxPlaytimeColor}">${game.maxplaytime}</td>
+            <td data-col="11" style="background-color: ${minPlayersColor}">${game.minplayers}</td>
+            <td data-col="12" data-category="${game.categoria}" style="background-color: ${cat1Color}">${game.categoria}</td>
+            <td data-col="13" data-category="${game.categoria2}" style="background-color: ${cat2Color}">${game.categoria2}</td>
+            <td data-col="14" data-category="${game.categoria3}" style="background-color: ${cat3Color}">${game.categoria3}</td>
+            <td data-col="15" style="background-color: ${seJugarColor}">${game.se_jugar}</td>
         `;
         tbody.appendChild(row);
     });
+    
+    // Aplicar columnas ocultas y congeladas después de renderizar
+    applyColumnVisibility();
+    applyFrozenColumns();
 }
 
 // Ordenar tabla
@@ -341,7 +348,7 @@ function clearFilters() {
     });
     
     filteredGames = [...games];
-    renderTable();
+    sortTable('juego');
 }
 
 // Ciclar operador al hacer click
@@ -367,16 +374,17 @@ function cycleOperator(button) {
 // Calcular rangos de sliders desde los datos
 function calculateSliderRanges() {
     const sliderConfigs = {
-        'slider-rank': { field: 'rank', step: 1 },
-        'slider-complejidad': { field: 'complejidad', step: 0.01 },
-        'slider-minplayers': { field: 'minplayers', step: 1 },
-        'slider-maxplayers': { field: 'maxplayers', step: 1 },
-        'slider-maxplaytime': { field: 'maxplaytime', step: 1 }
+        'slider-rank': { field: 'rank', step: 1, inputId: 'filter-rank' },
+        'slider-complejidad': { field: 'complejidad', step: 0.1, minOverride: 1.0, inputId: 'filter-complejidad' },
+        'slider-minplayers': { field: 'minplayers', step: 1, inputId: 'filter-minplayers' },
+        'slider-maxplayers': { field: 'maxplayers', step: 1, inputId: 'filter-maxplayers' },
+        'slider-maxplaytime': { field: 'maxplaytime', step: 1, inputId: 'filter-maxplaytime' }
     };
     
     Object.keys(sliderConfigs).forEach(sliderId => {
         const config = sliderConfigs[sliderId];
         const slider = document.getElementById(sliderId);
+        const input = document.getElementById(config.inputId);
         if (!slider) return;
         
         // Obtener valores numéricos válidos
@@ -386,13 +394,18 @@ function calculateSliderRanges() {
         
         if (values.length === 0) return;
         
-        const min = Math.min(...values);
+        const min = config.minOverride !== undefined ? config.minOverride : Math.min(...values);
         const max = Math.max(...values);
         
         slider.min = min;
         slider.max = max;
         slider.step = config.step;
         slider.value = min;
+        
+        // Actualizar placeholder del input con el valor mínimo
+        if (input) {
+            input.placeholder = min;
+        }
     });
 }
 
@@ -471,7 +484,261 @@ document.querySelectorAll('.sortable').forEach(th => {
     th.addEventListener('click', () => sortTable(th.dataset.sort));
 });
 
+// ============ COLUMNAS OCULTAS ============
+let hiddenColumns = new Set();
+
+function applyColumnVisibility() {
+    const table = document.getElementById('games-table');
+    const allCells = table.querySelectorAll('th, td');
+    
+    allCells.forEach(cell => {
+        const col = cell.dataset.col;
+        if (col !== undefined) {
+            cell.style.display = hiddenColumns.has(parseInt(col)) ? 'none' : '';
+        }
+    });
+}
+
+function toggleColumnVisibility(colIndex, visible) {
+    if (visible) {
+        hiddenColumns.delete(colIndex);
+    } else {
+        hiddenColumns.add(colIndex);
+    }
+    applyColumnVisibility();
+}
+
+// Panel de columnas
+document.getElementById('toggle-columns-panel').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const panel = document.getElementById('columns-options');
+    const freezePanel = document.getElementById('freeze-options');
+    freezePanel.style.display = 'none';
+    panel.style.display = panel.style.display === 'none' ? 'grid' : 'none';
+});
+
+// Panel de congelar
+document.getElementById('toggle-freeze-panel').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const panel = document.getElementById('freeze-options');
+    const columnsPanel = document.getElementById('columns-options');
+    columnsPanel.style.display = 'none';
+    panel.style.display = panel.style.display === 'none' ? 'grid' : 'none';
+});
+
+// Cerrar paneles al hacer click fuera
+document.addEventListener('click', (e) => {
+    const columnsPanel = document.getElementById('columns-options');
+    const freezePanel = document.getElementById('freeze-options');
+    const columnsBtn = document.getElementById('toggle-columns-panel');
+    const freezeBtn = document.getElementById('toggle-freeze-panel');
+    
+    if (!columnsPanel.contains(e.target) && e.target !== columnsBtn) {
+        columnsPanel.style.display = 'none';
+    }
+    if (!freezePanel.contains(e.target) && e.target !== freezeBtn) {
+        freezePanel.style.display = 'none';
+    }
+});
+
+// Checkboxes de columnas
+document.querySelectorAll('#columns-options input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+        const colIndex = parseInt(checkbox.dataset.col);
+        toggleColumnVisibility(colIndex, checkbox.checked);
+    });
+});
+
+// ============ COLUMNAS CONGELADAS ============
+let frozenUpTo = -1; // Índice de la última columna congelada (-1 = ninguna)
+
+function applyFrozenColumns() {
+    const table = document.getElementById('games-table');
+    const rows = table.querySelectorAll('tr');
+    
+    // Primero calcular anchos de columnas visibles
+    const colWidths = [];
+    const headerRow = table.querySelector('thead tr');
+    const headerCells = headerRow.querySelectorAll('th');
+    
+    headerCells.forEach((th, i) => {
+        if (!hiddenColumns.has(i)) {
+            colWidths[i] = th.offsetWidth;
+        }
+    });
+    
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('th, td');
+        let leftPos = 0;
+        
+        cells.forEach((cell, i) => {
+            const colIndex = parseInt(cell.dataset.col);
+            if (colIndex === undefined || hiddenColumns.has(colIndex)) return;
+            
+            // Limpiar clases previas
+            cell.classList.remove('frozen', 'frozen-border');
+            cell.style.left = '';
+            
+            if (colIndex <= frozenUpTo) {
+                cell.classList.add('frozen');
+                cell.style.left = leftPos + 'px';
+                
+                if (colIndex === frozenUpTo) {
+                    cell.classList.add('frozen-border');
+                }
+            }
+            
+            leftPos += colWidths[colIndex] || 0;
+        });
+    });
+}
+
+function freezeUpToColumn(colIndex) {
+    frozenUpTo = colIndex;
+    applyFrozenColumns();
+}
+
+// Event listeners para radio buttons de congelar
+document.querySelectorAll('input[name="freeze-col"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        const colIndex = parseInt(radio.value);
+        freezeUpToColumn(colIndex);
+    });
+});
+
+// ============ DESCRIPCIONES DE CATEGORÍAS ============
+const categoryDescriptions = {
+    'Estrategia': 'Juegos que requieren planificación a largo plazo, toma de decisiones y gestión de recursos. El azar tiene poco impacto.',
+    'Draft': 'Mecánica donde los jugadores seleccionan cartas o elementos de un conjunto común, pasando el resto al siguiente jugador.',
+    'Abstracto': 'Juegos con reglas simples pero profundidad estratégica. Generalmente sin tema o con tema mínimo.',
+    'Economía': 'Juegos centrados en la gestión de dinero, comercio, inversiones y desarrollo económico.',
+    'Construcción de Motores': 'Juegos donde construyes un sistema que se vuelve más eficiente con el tiempo, generando más recursos o acciones.',
+    'Construcción de Mazos': 'Empiezas con un mazo básico y lo mejoras comprando nuevas cartas durante la partida.',
+    'Familiar': 'Juegos accesibles para todas las edades, reglas sencillas y partidas relativamente cortas.',
+    'Palabras': 'Juegos basados en vocabulario, deletreo o asociación de palabras.',
+    'Juego de Cartas': 'Juegos donde las cartas son el componente principal de la mecánica.',
+    'Tentando a la Suerte': 'Juegos donde el azar juega un papel importante y los jugadores arriesgan para obtener mejores resultados.',
+    'Cooperativo': 'Todos los jugadores trabajan juntos contra el juego para lograr un objetivo común.',
+    'Deducción': 'Juegos donde debes descubrir información oculta mediante pistas y razonamiento lógico.',
+    'Dados': 'Juegos donde los dados son el componente principal para determinar resultados.',
+    'Party Game': 'Juegos sociales para grupos grandes, enfocados en la diversión y la interacción.',
+    'Colección de Sets': 'Juegos donde el objetivo es reunir conjuntos específicos de elementos para obtener puntos.',
+    'Roll and Write': 'Juegos donde tiras dados y marcas resultados en una hoja de papel.',
+    'Narrativo': 'Juegos que cuentan una historia, donde las decisiones de los jugadores afectan la narrativa.',
+    'Temático': 'Juegos con una ambientación fuerte donde el tema está integrado en las mecánicas.',
+    'Puzzle': 'Juegos que presentan desafíos lógicos o espaciales que resolver.',
+    'Área Control': 'Juegos donde los jugadores compiten por controlar regiones del tablero.',
+    'Negociación': 'Juegos donde el comercio y los acuerdos entre jugadores son fundamentales.',
+    'Bluffing': 'Juegos donde engañar a los oponentes es parte de la estrategia.',
+    'Dexterity': 'Juegos que requieren habilidad física o coordinación mano-ojo.',
+    'Legacy': 'Juegos que cambian permanentemente entre partidas, con decisiones que afectan futuras sesiones.',
+    'Worker Placement': 'Colocas trabajadores en espacios de acción limitados para obtener recursos o realizar acciones.',
+    'Tile Placement': 'Juegos donde colocas fichas o losetas para construir el tablero durante la partida.',
+    'Social Deduction': 'Juegos donde algunos jugadores tienen roles ocultos y otros deben descubrirlos.',
+    'Racing': 'Juegos donde el objetivo es llegar primero a la meta.',
+    'Trivia': 'Juegos de preguntas y respuestas sobre conocimientos generales o específicos.'
+};
+
+// Poblar modal de descripciones
+function populateCategoryDescriptions() {
+    const container = document.getElementById('category-descriptions');
+    
+    // Obtener todas las categorías ordenadas
+    const allCategories = new Set();
+    games.forEach(game => {
+        if (game.categoria) allCategories.add(game.categoria);
+        if (game.categoria2) allCategories.add(game.categoria2);
+        if (game.categoria3) allCategories.add(game.categoria3);
+    });
+    
+    const sortedCategories = Array.from(allCategories).sort((a, b) => 
+        a.localeCompare(b, 'es', { sensitivity: 'base' })
+    );
+    
+    container.innerHTML = sortedCategories.map(cat => `
+        <div class="category-item">
+            <div class="category-name">${cat}</div>
+            <div class="category-desc">${categoryDescriptions[cat] || 'Descripción no disponible.'}</div>
+        </div>
+    `).join('');
+}
+
+// Mostrar/ocultar modal
+document.getElementById('btn-category-help').addEventListener('click', () => {
+    document.getElementById('category-modal').style.display = 'flex';
+});
+
+document.getElementById('close-category-modal').addEventListener('click', () => {
+    document.getElementById('category-modal').style.display = 'none';
+});
+
+document.getElementById('category-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'category-modal') {
+        document.getElementById('category-modal').style.display = 'none';
+    }
+});
+
+// Tooltip para categorías en la tabla
+const tooltip = document.getElementById('category-tooltip');
+let tooltipTimeout;
+
+function showCategoryTooltip(e, category) {
+    if (!category || !categoryDescriptions[category]) return;
+    
+    clearTimeout(tooltipTimeout);
+    
+    tooltip.innerHTML = `
+        <div class="category-name">${category}</div>
+        <div class="category-desc">${categoryDescriptions[category]}</div>
+    `;
+    
+    // Posicionar tooltip
+    const rect = e.target.getBoundingClientRect();
+    let left = rect.left;
+    let top = rect.bottom + 8;
+    
+    // Ajustar si se sale de la pantalla
+    if (left + 280 > window.innerWidth) {
+        left = window.innerWidth - 290;
+    }
+    if (top + 150 > window.innerHeight) {
+        top = rect.top - 8;
+        tooltip.style.transform = 'translateY(-100%)';
+    } else {
+        tooltip.style.transform = 'none';
+    }
+    
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+    tooltip.style.display = 'block';
+}
+
+function hideCategoryTooltip() {
+    tooltipTimeout = setTimeout(() => {
+        tooltip.style.display = 'none';
+    }, 200);
+}
+
+// Delegación de eventos para celdas de categoría
+document.getElementById('games-tbody').addEventListener('click', (e) => {
+    const cell = e.target.closest('td[data-category]');
+    if (cell) {
+        const category = cell.dataset.category;
+        if (category) {
+            showCategoryTooltip(e, category);
+        }
+    }
+});
+
+// Cerrar tooltip al hacer click fuera
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('td[data-category]') && !e.target.closest('.category-tooltip')) {
+        tooltip.style.display = 'none';
+    }
+});
+
 // Inicializar sliders, dropdown de categorías y ordenar por Juego al cargar
 calculateSliderRanges();
 populateCategoryDropdown();
+populateCategoryDescriptions();
 sortTable('juego');

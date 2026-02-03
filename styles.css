@@ -228,6 +228,97 @@ h2 {
     background-color: var(--danger-hover);
 }
 
+/* Panel de columnas */
+.columns-panel {
+    margin-bottom: 10px;
+    position: relative;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-columns {
+    padding: 10px 16px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-columns:hover {
+    background-color: var(--row-hover);
+}
+
+.columns-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    z-index: 100;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.columns-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.columns-options label:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.columns-options input[type="checkbox"],
+.columns-options input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Panel de congelar columnas */
+.freeze-options {
+    left: 0;
+}
+
+.freeze-hint {
+    grid-column: span 2;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Columnas congeladas */
+th.frozen, td.frozen {
+    position: sticky;
+    background-color: var(--bg-secondary) !important;
+    z-index: 2;
+}
+
+thead th.frozen {
+    z-index: 3;
+}
+
+.frozen-border {
+    border-right: 3px solid var(--accent-color) !important;
+}
+
 .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -329,6 +420,131 @@ tbody tr:nth-child(even) {
     font-size: 14px;
 }
 
+/* Botón de ayuda */
+.btn-help {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    vertical-align: middle;
+}
+
+/* Modal de categorías */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.modal-close:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.category-item {
+    padding: 12px;
+    margin-bottom: 8px;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.category-item:last-child {
+    margin-bottom: 0;
+}
+
+.category-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.category-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Tooltip para categorías en la tabla */
+.category-tooltip {
+    position: fixed;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    max-width: 280px;
+    z-index: 1001;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.category-tooltip .category-name {
+    margin-bottom: 4px;
+}
+
+.category-tooltip .category-desc {
+    font-size: 12px;
+}
+
+/* Hacer celdas de categoría clickeables */
+td[data-category] {
+    cursor: pointer;
+}
+
+td[data-category]:hover {
+    text-decoration: underline;
+}
+
 /* Responsive para tablets */
 @media (min-width: 768px) {
     body {
@@ -346,6 +562,11 @@ tbody tr:nth-child(even) {
     
     h2 {
         font-size: 18px;
+    }
+    
+    .columns-options {
+        grid-template-columns: repeat(3, 1fr);
+        min-width: 400px;
     }
     
     .filters {
