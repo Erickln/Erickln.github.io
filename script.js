@@ -210,9 +210,12 @@ function updateSortIndicators(activeField) {
 // Función para comparar valores numéricos según operador
 function compareValues(gameValue, filterValue, operator) {
     if (filterValue === '') return true;
-    const numGame = parseFloat(gameValue);
     const numFilter = parseFloat(filterValue);
-    if (isNaN(numGame) || isNaN(numFilter)) return true;
+    if (isNaN(numFilter)) return true;
+    
+    const numGame = parseFloat(gameValue);
+    // Si el valor del juego no es numérico (N/A, etc.), mostrarlo igual
+    if (isNaN(numGame)) return true;
     
     switch (operator) {
         case '>=': return numGame >= numFilter;
@@ -226,15 +229,15 @@ function compareValues(gameValue, filterValue, operator) {
 function applyFilters() {
     const filters = {
         rank: document.getElementById('filter-rank').value,
-        rankOp: document.getElementById('filter-rank-op').value,
+        rankOp: document.getElementById('filter-rank-op').dataset.value,
         complejidad: document.getElementById('filter-complejidad').value,
-        complejidadOp: document.getElementById('filter-complejidad-op').value,
+        complejidadOp: document.getElementById('filter-complejidad-op').dataset.value,
         minplayers: document.getElementById('filter-minplayers').value,
-        minplayersOp: document.getElementById('filter-minplayers-op').value,
+        minplayersOp: document.getElementById('filter-minplayers-op').dataset.value,
         maxplayers: document.getElementById('filter-maxplayers').value,
-        maxplayersOp: document.getElementById('filter-maxplayers-op').value,
+        maxplayersOp: document.getElementById('filter-maxplayers-op').dataset.value,
         maxplaytime: document.getElementById('filter-maxplaytime').value,
-        maxplaytimeOp: document.getElementById('filter-maxplaytime-op').value,
+        maxplaytimeOp: document.getElementById('filter-maxplaytime-op').dataset.value,
         categoria: document.getElementById('filter-categoria').value.toLowerCase()
     };
     
@@ -255,45 +258,120 @@ function applyFilters() {
 // Limpiar filtros
 function clearFilters() {
     document.getElementById('filter-rank').value = '';
-    document.getElementById('filter-rank-op').value = '>=';
     document.getElementById('filter-complejidad').value = '';
-    document.getElementById('filter-complejidad-op').value = '>=';
     document.getElementById('filter-minplayers').value = '';
-    document.getElementById('filter-minplayers-op').value = '>=';
     document.getElementById('filter-maxplayers').value = '';
-    document.getElementById('filter-maxplayers-op').value = '>=';
     document.getElementById('filter-maxplaytime').value = '';
-    document.getElementById('filter-maxplaytime-op').value = '>=';
     document.getElementById('filter-categoria').value = '';
+    
+    // Resetear operadores a >=
+    document.querySelectorAll('.filter-operator').forEach(button => {
+        button.dataset.value = '>=';
+        button.textContent = '≥';
+        button.classList.remove('op-lte', 'op-eq');
+        button.classList.add('op-gte');
+    });
+    
+    // Resetear sliders a su valor mínimo
+    document.querySelectorAll('.filter-slider').forEach(slider => {
+        slider.value = slider.min;
+    });
     
     filteredGames = [...games];
     renderTable();
 }
 
-// Actualizar color del operador de filtro
-function updateOperatorColor(select) {
-    select.classList.remove('op-gte', 'op-lte', 'op-eq');
-    switch (select.value) {
-        case '>=': select.classList.add('op-gte'); break;
-        case '<=': select.classList.add('op-lte'); break;
-        case '=': select.classList.add('op-eq'); break;
+// Ciclar operador al hacer click
+function cycleOperator(button) {
+    const operators = ['>=', '<=', '='];
+    const symbols = ['≥', '≤', '='];
+    const currentValue = button.dataset.value;
+    const currentIndex = operators.indexOf(currentValue);
+    const nextIndex = (currentIndex + 1) % operators.length;
+    
+    button.dataset.value = operators[nextIndex];
+    button.textContent = symbols[nextIndex];
+    
+    // Actualizar clase de color
+    button.classList.remove('op-gte', 'op-lte', 'op-eq');
+    switch (operators[nextIndex]) {
+        case '>=': button.classList.add('op-gte'); break;
+        case '<=': button.classList.add('op-lte'); break;
+        case '=': button.classList.add('op-eq'); break;
+    }
+}
+
+// Calcular rangos de sliders desde los datos
+function calculateSliderRanges() {
+    const sliderConfigs = {
+        'slider-rank': { field: 'rank', step: 1 },
+        'slider-complejidad': { field: 'complejidad', step: 0.01 },
+        'slider-minplayers': { field: 'minplayers', step: 1 },
+        'slider-maxplayers': { field: 'maxplayers', step: 1 },
+        'slider-maxplaytime': { field: 'maxplaytime', step: 1 }
+    };
+    
+    Object.keys(sliderConfigs).forEach(sliderId => {
+        const config = sliderConfigs[sliderId];
+        const slider = document.getElementById(sliderId);
+        if (!slider) return;
+        
+        // Obtener valores numéricos válidos
+        const values = games
+            .map(g => parseFloat(g[config.field]))
+            .filter(v => !isNaN(v));
+        
+        if (values.length === 0) return;
+        
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        
+        slider.min = min;
+        slider.max = max;
+        slider.step = config.step;
+        slider.value = min;
+    });
+}
+
+// Sincronizar slider con input
+function syncSliderToInput(slider) {
+    const targetId = slider.dataset.target;
+    const input = document.getElementById(targetId);
+    if (input) {
+        input.value = slider.value;
+        applyFilters();
+    }
+}
+
+// Sincronizar input con slider
+function syncInputToSlider(input) {
+    const sliderId = 'slider-' + input.id.replace('filter-', '');
+    const slider = document.getElementById(sliderId);
+    if (slider && input.value !== '') {
+        slider.value = input.value;
     }
 }
 
 // Event listeners
 document.querySelectorAll('.filter-input').forEach(input => {
-    input.addEventListener('input', applyFilters);
+    input.addEventListener('input', () => {
+        syncInputToSlider(input);
+        applyFilters();
+    });
 });
 
 document.getElementById('clear-filters').addEventListener('click', clearFilters);
 
-document.querySelectorAll('.filter-operator').forEach(select => {
-    select.addEventListener('change', () => {
-        updateOperatorColor(select);
+document.querySelectorAll('.filter-operator').forEach(button => {
+    button.addEventListener('click', () => {
+        cycleOperator(button);
         applyFilters();
     });
-    // Aplicar color inicial
-    updateOperatorColor(select);
+});
+
+// Event listeners para sliders
+document.querySelectorAll('.filter-slider').forEach(slider => {
+    slider.addEventListener('input', () => syncSliderToInput(slider));
 });
 
 // Event listeners para ordenamiento
@@ -301,5 +379,6 @@ document.querySelectorAll('.sortable').forEach(th => {
     th.addEventListener('click', () => sortTable(th.dataset.sort));
 });
 
-// Ordenar por Juego al cargar y renderizar tabla inicial
+// Inicializar sliders y ordenar por Juego al cargar
+calculateSliderRanges();
 sortTable('juego');
