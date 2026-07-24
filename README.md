@@ -115,7 +115,7 @@ Para agregar juegos, edita el archivo `games.js` siguiendo esta estructura:
 
 - **Estrategia** - Juegos que requieren planificación a largo plazo
 - **Cooperativo** - Todos los jugadores trabajan juntos
-- **Construcción de Mazos** - Construye tu mazo durante la partida
+- **Colocación de Decks** - Construye tu mazo durante la partida
 - **Deducción Social** - Roles ocultos y engaño
 - **Familiar** - Accesibles para toda la familia
 - **Fiesta** - Juegos sociales y divertidos

@@ -642,11 +642,11 @@ const categoryDescriptions = {
         desc: 'Reconocimiento de patrones para agrupar ítems específicos que valen más juntos que separados.',
         ejemplo: 'Ignorar una carta valiosa solitaria para buscar la tercera carta verde que completa tu trío.'
     },
-    'Colocación de Losetas': {
+    'Colocación de Fichas': {
         desc: 'Construcción progresiva del terreno de juego encajando piezas geométricas.',
-        ejemplo: 'Girar una loseta hexagonal varias veces hasta que el dibujo del río coincida con el del tablero.'
+        ejemplo: 'Gestionar el espacio del tablero para colocar una loseta que te da puntos extra por cada loseta adyacente.'
     },
-    'Construcción de Mazos': {
+    'Colocación de Decks': {
         desc: 'Optimización de probabilidades reciclando tu propia pila de descarte con mejores cartas.',
         ejemplo: 'Comprar una carta que te permite robar dos cartas extra cada vez que vuelva a salir.'
     },
@@ -692,7 +692,7 @@ const categoryDescriptions = {
     },
     'Fiesta': {
         desc: 'Generación de caos controlado y dinámicas sociales rápidas para romper el hielo.',
-        ejemplo: 'Gritar una respuesta absurda rápidamente antes de que se acabe el tiempo del reloj de arena.'
+        ejemplo: 'Gritar una respuesta absurda rápidamente antes de que se acabe el tiempo.'
     },
     'Gestión de Mano': {
         desc: 'Administración de recursos (cartas) limitados, decidiendo cuándo es el momento óptimo de gastarlos.',
@@ -701,10 +701,6 @@ const categoryDescriptions = {
     'Juego de Cartas': {
         desc: 'Uso de naipes como vehículo principal para ejecutar todas las reglas y mecánicas.',
         ejemplo: 'Barajar el mazo y repartir una nueva mano para reiniciar las opciones tácticas.'
-    },
-    '"Take That"': {
-        desc: 'Interacción agresiva directa destinada a sabotear o robar a quien va ganando.',
-        ejemplo: 'Jugar una carta de "Robo" para quitarle al líder el objeto que estaba a punto de usar para ganar.'
     },
     'Tentando a la Suerte': {
         desc: 'Evaluación de riesgo/recompensa donde la avaricia puede llevar a perderlo todo.',
@@ -720,7 +716,7 @@ const categoryDescriptions = {
     },
     'Take That (Ataque)': {
         desc: 'Mecánica donde los jugadores pueden atacar o perjudicar a otros directamente.',
-        ejemplo: 'Usar una carta que obliga a otro jugador a perder su próximo turno.'
+        ejemplo: 'Usar una carta que obliga a otro jugador a arriesgar perder su estrategia.'
     },
     'GAMBLING': {
         desc: '<img src="https://media.tenor.com/xy2XPgbXW7cAAAAM/bumbur95-gamba.gif" alt="GAMBLING" style="max-width: 100%; height: auto;">',

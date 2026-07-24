@@ -45,7 +45,7 @@ const games = [
         "minplaytime": "45",
         "maxplaytime": "90",
         "minplayers": "2",
-        "categoria": "Construcción de Mazos",
+        "categoria": "Colocación de Decks",
         "categoria2": "Estrategia",
         "categoria3": "Abstracto",
         "se_jugar": "Sí"
@@ -113,7 +113,7 @@ const games = [
         "minplaytime": "90",
         "maxplaytime": "180",
         "minplayers": "2",
-        "categoria": "Construcción de Mazos",
+        "categoria": "Colocación de Decks",
         "categoria2": "Cooperativo",
         "categoria3": "Estrategia",
         "se_jugar": "Sí"
@@ -199,7 +199,7 @@ const games = [
         "maxplaytime": "45",
         "minplayers": "1",
         "categoria": "Estrategia",
-        "categoria2": "Colocación de Losetas",
+        "categoria2": "Colocación de Fichas",
         "categoria3": "Abstracto",
         "se_jugar": "Sí"
     },
@@ -216,8 +216,8 @@ const games = [
         "maxplaytime": "160",
         "minplayers": "1",
         "categoria": "Estrategia",
-        "categoria2": "Construcción de Mazos",
-        "categoria3": "Gestión de Mano",
+        "categoria2": "Colocación de Decks",
+        "categoria3": "Draft",
         "se_jugar": "No"
     },
     {
@@ -283,7 +283,7 @@ const games = [
         "minplaytime": "30",
         "maxplaytime": "50",
         "minplayers": "2",
-        "categoria": "Colocación de Losetas",
+        "categoria": "Colocación de Fichas",
         "categoria2": "Abstracto",
         "categoria3": "Estrategia",
         "se_jugar": "Sí"
