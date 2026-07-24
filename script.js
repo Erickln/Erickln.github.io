@@ -2,6 +2,42 @@ let games = [];
 let filteredGames = [];
 let currentSort = { field: null, ascending: true };
 let categoryDescriptions = {};
+let collectionConfig = null;
+
+const defaultCollectionConfig = {
+    collectionName: 'Colección de Juegos de Mesa',
+    defaultHiddenColumns: [6],
+    categoryFields: [
+        { field: 'categoria', label: 'Cat. Principal' },
+        { field: 'categoria2', label: 'Cat. Secundaria' },
+        { field: 'categoria3', label: 'Cat. Terciaria' }
+    ],
+    columns: [
+        { col: 0, field: '__index', label: '#', type: 'index', visible: true, freezeLabel: '#' },
+        { col: 1, field: 'imagen', label: 'Imagen', type: 'image', visible: true, freezeLabel: 'Imagen' },
+        { col: 2, field: 'juego', label: 'Juego', type: 'text', visible: true, freezeLabel: 'Juego', sortableField: 'juego' },
+        { col: 3, field: 'rank', label: 'Rank', type: 'number', visible: true, freezeLabel: 'Rank', sortableField: 'rank' },
+        { col: 4, field: 'complejidad', label: 'Complejidad', type: 'number', visible: true, freezeLabel: 'Complejidad', sortableField: 'complejidad' },
+        { col: 5, field: 'trata', label: '¿De qué trata?', type: 'text', visible: true, freezeLabel: '¿De qué trata?', sortableField: 'trata' },
+        { col: 6, field: 'calificacion', label: 'Calificación', type: 'number', visible: false, freezeLabel: 'Calificación', sortableField: 'calificacion' },
+        { col: 7, field: 'recomm_players', label: 'Recomm Players', type: 'number', visible: true, freezeLabel: 'Recomm Players', sortableField: 'recomm_players' },
+        { col: 8, field: 'maxplayers', label: 'Max Players', type: 'number', visible: true, freezeLabel: 'Max Players', sortableField: 'maxplayers' },
+        { col: 9, field: 'minplaytime', label: 'Min Playtime', type: 'number', visible: true, freezeLabel: 'Min Playtime', sortableField: 'minplaytime' },
+        { col: 10, field: 'maxplaytime', label: 'Max Playtime', type: 'number', visible: true, freezeLabel: 'Max Playtime', sortableField: 'maxplaytime' },
+        { col: 11, field: 'minplayers', label: 'Min Players', type: 'number', visible: true, freezeLabel: 'Min Players', sortableField: 'minplayers' },
+        { col: 12, field: 'categoria', label: 'Cat. Principal', type: 'category', visible: true, freezeLabel: 'Cat. Principal', sortableField: 'categoria' },
+        { col: 13, field: 'categoria2', label: 'Cat. Secundaria', type: 'category', visible: true, freezeLabel: 'Cat. Secundaria', sortableField: 'categoria2' },
+        { col: 14, field: 'categoria3', label: 'Cat. Terciaria', type: 'category', visible: true, freezeLabel: 'Cat. Terciaria', sortableField: 'categoria3' },
+        { col: 15, field: 'se_jugar', label: 'Sé jugarlo', type: 'status', visible: true, freezeLabel: 'Sé jugarlo', sortableField: 'se_jugar' }
+    ],
+    filters: [
+        { inputId: 'filter-rank', sliderId: 'slider-rank', operatorId: 'filter-rank-op', field: 'rank', type: 'number' },
+        { inputId: 'filter-complejidad', sliderId: 'slider-complejidad', operatorId: 'filter-complejidad-op', field: 'complejidad', type: 'number', minOverride: 1.0 },
+        { inputId: 'filter-minplayers', sliderId: 'slider-minplayers', operatorId: 'filter-minplayers-op', field: 'minplayers', type: 'number' },
+        { inputId: 'filter-maxplayers', sliderId: 'slider-maxplayers', operatorId: 'filter-maxplayers-op', field: 'maxplayers', type: 'number' },
+        { inputId: 'filter-maxplaytime', sliderId: 'slider-maxplaytime', operatorId: 'filter-maxplaytime-op', field: 'maxplaytime', type: 'number' }
+    ]
+};
 
 // Colores para categorías (se asignan dinámicamente)
 const categoryColors = {};
@@ -30,6 +66,41 @@ function getSeJugarColor(value) {
     if (normalized === 'sí' || normalized === 'si') return '#1b5e20'; // Verde oscuro - Sí
     if (normalized === 'no') return '#b71c1c'; // Rojo oscuro - No
     return '#e65100'; // Naranja oscuro - Otro valor
+}
+
+function cloneDefaultCollectionConfig() {
+    return JSON.parse(JSON.stringify(defaultCollectionConfig));
+}
+
+function getActiveCollectionConfig() {
+    return collectionConfig || defaultCollectionConfig;
+}
+
+function getCategoryFields() {
+    return getActiveCollectionConfig().categoryFields || defaultCollectionConfig.categoryFields;
+}
+
+function getColumnConfigs() {
+    return getActiveCollectionConfig().columns || defaultCollectionConfig.columns;
+}
+
+function getColumnConfigByIndex(colIndex) {
+    return getColumnConfigs().find(column => column.col === colIndex) || null;
+}
+
+function getNumericFields() {
+    return getColumnConfigs()
+        .filter(column => column.type === 'number' && column.field)
+        .map(column => column.field);
+}
+
+function getFilterConfigs() {
+    return getActiveCollectionConfig().filters || defaultCollectionConfig.filters;
+}
+
+function getConfigFieldLabel(fieldName, fallbackLabel = fieldName) {
+    const column = getColumnConfigs().find(columnConfig => columnConfig.field === fieldName);
+    return column?.label || fallbackLabel;
 }
 
 // Calcular percentiles para ignorar valores atípicos
@@ -113,9 +184,10 @@ function getGradientColor(value, min, max, invertir = false, mid = null) {
 // Calcular rangos para las columnas numéricas
 function calculateColorRanges() {
     const ranges = {};
+    const numericFields = getNumericFields();
     
     // Rank (menor es mejor - invertir)
-    const ranks = games.map(g => parseFloat(g.rank)).filter(v => !isNaN(v));
+    const ranks = numericFields.includes('rank') ? games.map(g => parseFloat(g.rank)).filter(v => !isNaN(v)) : [];
     ranges.rank = calculatePercentiles(ranks);
     ranges.rank.invertir = true;
     
@@ -123,7 +195,7 @@ function calculateColorRanges() {
     ranges.complejidad = { min: 1, mid: 2.5, max: 5, invertir: true };
     
     // Calificación (mayor es mejor)
-    const calificaciones = games.map(g => parseFloat(g.calificacion)).filter(v => !isNaN(v));
+    const calificaciones = numericFields.includes('calificacion') ? games.map(g => parseFloat(g.calificacion)).filter(v => !isNaN(v)) : [];
     ranges.calificacion = calculatePercentiles(calificaciones);
     ranges.calificacion.invertir = false;
     
@@ -134,12 +206,12 @@ function calculateColorRanges() {
     ranges.maxplayers = { min: 1, mid: 5, max: 10, invertir: false };
     
     // Min playtime (menor = más rápido = verde)
-    const minPlaytimes = games.map(g => parseFloat(g.minplaytime)).filter(v => !isNaN(v));
+    const minPlaytimes = numericFields.includes('minplaytime') ? games.map(g => parseFloat(g.minplaytime)).filter(v => !isNaN(v)) : [];
     ranges.minplaytime = calculatePercentiles(minPlaytimes);
     ranges.minplaytime.invertir = true;
     
     // Max playtime (menor = más rápido = verde)
-    const maxPlaytimes = games.map(g => parseFloat(g.maxplaytime)).filter(v => !isNaN(v));
+    const maxPlaytimes = numericFields.includes('maxplaytime') ? games.map(g => parseFloat(g.maxplaytime)).filter(v => !isNaN(v)) : [];
     ranges.maxplaytime = calculatePercentiles(maxPlaytimes);
     ranges.maxplaytime.invertir = true;
     
@@ -232,8 +304,7 @@ function sortTable(field) {
         currentSort.ascending = true;
     }
     
-    const numericFields = ['rank', 'complejidad', 'calificacion', 'recomm_players', 'maxplayers', 'minplaytime', 'maxplaytime', 'minplayers'];
-    const isNumeric = numericFields.includes(field);
+    const isNumeric = getNumericFields().includes(field);
     
     filteredGames.sort((a, b) => {
         let valA = a[field];
@@ -300,6 +371,7 @@ function compareValues(gameValue, filterValue, operator) {
 
 // Aplicar filtros
 function applyFilters() {
+    const categoryFields = getCategoryFields().map(categoryField => categoryField.field);
     const filters = {
         rank: document.getElementById('filter-rank').value,
         rankOp: document.getElementById('filter-rank-op').dataset.value,
@@ -316,10 +388,10 @@ function applyFilters() {
     
     filteredGames = games.filter(game => {
         // Para categoría, buscar en las 3 columnas
-        const matchesCategory = filters.categoria === '' || 
-            game.categoria.toLowerCase() === filters.categoria ||
-            (game.categoria2 && game.categoria2.toLowerCase() === filters.categoria) ||
-            (game.categoria3 && game.categoria3.toLowerCase() === filters.categoria);
+        const matchesCategory = filters.categoria === '' || categoryFields.some(field => {
+            const categoryValue = (game[field] || '').toLowerCase();
+            return categoryValue === filters.categoria;
+        });
         
         return (
             compareValues(game.rank, filters.rank, filters.rankOp) &&
@@ -382,13 +454,15 @@ function cycleOperator(button) {
 
 // Calcular rangos de sliders desde los datos
 function calculateSliderRanges() {
-    const sliderConfigs = {
-        'slider-rank': { field: 'rank', step: 1, inputId: 'filter-rank' },
-        'slider-complejidad': { field: 'complejidad', step: 0.1, minOverride: 1.0, inputId: 'filter-complejidad' },
-        'slider-minplayers': { field: 'minplayers', step: 1, inputId: 'filter-minplayers' },
-        'slider-maxplayers': { field: 'maxplayers', step: 1, inputId: 'filter-maxplayers' },
-        'slider-maxplaytime': { field: 'maxplaytime', step: 1, inputId: 'filter-maxplaytime' }
-    };
+    const sliderConfigs = getFilterConfigs().reduce((accumulator, filterConfig) => {
+        accumulator[filterConfig.sliderId] = {
+            field: filterConfig.field,
+            step: filterConfig.step || (filterConfig.field === 'complejidad' ? 0.1 : 1),
+            minOverride: filterConfig.minOverride,
+            inputId: filterConfig.inputId
+        };
+        return accumulator;
+    }, {});
     
     Object.keys(sliderConfigs).forEach(sliderId => {
         const config = sliderConfigs[sliderId];
@@ -419,7 +493,7 @@ function calculateSliderRanges() {
 }
 
 async function loadJsonResource(url) {
-    const inlineId = url === 'games.json' ? 'games-data' : url === 'categories.json' ? 'categories-data' : null;
+    const inlineId = url === 'games.json' ? 'games-data' : url === 'categories.json' ? 'categories-data' : url === 'collection-config.json' ? 'collection-config-data' : null;
     if (inlineId) {
         const inlineScript = document.getElementById(inlineId);
         if (inlineScript && inlineScript.textContent.trim()) {
@@ -459,6 +533,23 @@ async function loadGames() {
     return loadJsonResource('games.json');
 }
 
+async function loadCollectionConfig() {
+    try {
+        const loadedConfig = await loadJsonResource('collection-config.json');
+        collectionConfig = {
+            ...cloneDefaultCollectionConfig(),
+            ...loadedConfig,
+            categoryFields: loadedConfig.categoryFields || defaultCollectionConfig.categoryFields,
+            columns: loadedConfig.columns || defaultCollectionConfig.columns,
+            filters: loadedConfig.filters || defaultCollectionConfig.filters,
+            defaultHiddenColumns: loadedConfig.defaultHiddenColumns || defaultCollectionConfig.defaultHiddenColumns
+        };
+    } catch (error) {
+        console.error('No se pudo cargar la configuración de la colección:', error);
+        collectionConfig = cloneDefaultCollectionConfig();
+    }
+}
+
 // Sincronizar slider con input
 function syncSliderToInput(slider) {
     const targetId = slider.dataset.target;
@@ -482,12 +573,12 @@ function syncInputToSlider(input) {
 function populateCategoryDropdown() {
     const categorySelect = document.getElementById('filter-categoria');
     
-    // Obtener todas las categorías únicas de las 3 columnas
+    // Obtener todas las categorías únicas de las columnas configuradas
     const allCategories = new Set();
     games.forEach(game => {
-        if (game.categoria) allCategories.add(game.categoria);
-        if (game.categoria2) allCategories.add(game.categoria2);
-        if (game.categoria3) allCategories.add(game.categoria3);
+        getCategoryFields().forEach(categoryField => {
+            if (game[categoryField.field]) allCategories.add(game[categoryField.field]);
+        });
     });
     
     // Ordenar alfabéticamente
@@ -535,7 +626,55 @@ document.querySelectorAll('.sortable').forEach(th => {
 });
 
 // ============ COLUMNAS OCULTAS ============
-let hiddenColumns = new Set([6]); // Calificación oculta por defecto
+let hiddenColumns = new Set(defaultCollectionConfig.defaultHiddenColumns);
+
+function applyCollectionConfigToUI() {
+    const activeConfig = getActiveCollectionConfig();
+    const title = activeConfig.collectionName || defaultCollectionConfig.collectionName;
+    document.title = title;
+
+    const pageTitle = document.querySelector('.container h1');
+    if (pageTitle) {
+        pageTitle.textContent = title;
+    }
+
+    document.querySelectorAll('#columns-options label').forEach(label => {
+        const checkbox = label.querySelector('input[type="checkbox"]');
+        if (!checkbox) return;
+        const columnIndex = parseInt(checkbox.dataset.col);
+        const columnConfig = getColumnConfigByIndex(columnIndex);
+        if (columnConfig) {
+            checkbox.checked = !hiddenColumns.has(columnIndex);
+            label.lastChild.textContent = ` ${columnConfig.label}`;
+        }
+    });
+
+    document.querySelectorAll('#freeze-options label').forEach(label => {
+        const radio = label.querySelector('input[type="radio"]');
+        if (!radio) return;
+        if (radio.value === '-1') {
+            label.lastChild.textContent = ' Ninguna';
+            return;
+        }
+        const columnConfig = getColumnConfigByIndex(parseInt(radio.value));
+        if (columnConfig) {
+            label.lastChild.textContent = ` ${columnConfig.freezeLabel || columnConfig.label}`;
+        }
+    });
+
+    document.querySelectorAll('#games-table th[data-col]').forEach(th => {
+        const columnIndex = parseInt(th.dataset.col);
+        const columnConfig = getColumnConfigByIndex(columnIndex);
+        if (!columnConfig) return;
+
+        const baseLabel = columnConfig.label;
+        if (th.classList.contains('sortable')) {
+            th.textContent = `${baseLabel} ↕`;
+        } else {
+            th.textContent = baseLabel;
+        }
+    });
+}
 
 function applyColumnVisibility() {
     const table = document.getElementById('games-table');
@@ -677,9 +816,9 @@ function populateCategoryDescriptions() {
     // Obtener todas las categorías ordenadas
     const allCategories = new Set();
     games.forEach(game => {
-        if (game.categoria) allCategories.add(game.categoria);
-        if (game.categoria2) allCategories.add(game.categoria2);
-        if (game.categoria3) allCategories.add(game.categoria3);
+        getCategoryFields().forEach(categoryField => {
+            if (game[categoryField.field]) allCategories.add(game[categoryField.field]);
+        });
     });
     
     const sortedCategories = Array.from(allCategories).sort((a, b) => 
@@ -807,6 +946,12 @@ closeInstructionsBtn.addEventListener('touchend', closeInstructions);
 
 async function loadCategoryDescriptions() {
     try {
+        const activeConfig = getActiveCollectionConfig();
+        if (activeConfig.categoryDescriptions) {
+            categoryDescriptions = activeConfig.categoryDescriptions;
+            return;
+        }
+
         categoryDescriptions = await loadJsonResource('categories.json');
     } catch (error) {
         console.error('No se pudieron cargar las descripciones de categorías:', error);
@@ -816,6 +961,8 @@ async function loadCategoryDescriptions() {
 
 // Inicializar sliders, dropdown de categorías y ordenar por Juego al cargar
 (async function init() {
+    await loadCollectionConfig();
+
     try {
         games = await loadGames();
     } catch (error) {
@@ -823,9 +970,11 @@ async function loadCategoryDescriptions() {
         games = [];
     }
 
+    hiddenColumns = new Set(getActiveCollectionConfig().defaultHiddenColumns || defaultCollectionConfig.defaultHiddenColumns);
     filteredGames = [...games];
     colorRanges = calculateColorRanges();
     await loadCategoryDescriptions();
+    applyCollectionConfigToUI();
     calculateSliderRanges();
     populateCategoryDropdown();
     populateCategoryDescriptions();

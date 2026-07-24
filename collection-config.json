@@ -1,0 +1,200 @@
+{
+  "collectionName": "Colección de Juegos de Mesa",
+  "defaultHiddenColumns": [6],
+  "categoryFields": [
+    {
+      "field": "categoria",
+      "label": "Cat. Principal"
+    },
+    {
+      "field": "categoria2",
+      "label": "Cat. Secundaria"
+    },
+    {
+      "field": "categoria3",
+      "label": "Cat. Terciaria"
+    }
+  ],
+  "columns": [
+    {
+      "col": 0,
+      "field": "__index",
+      "label": "#",
+      "type": "index",
+      "visible": true,
+      "freezeLabel": "#"
+    },
+    {
+      "col": 1,
+      "field": "imagen",
+      "label": "Imagen",
+      "type": "image",
+      "visible": true,
+      "freezeLabel": "Imagen"
+    },
+    {
+      "col": 2,
+      "field": "juego",
+      "label": "Juego",
+      "type": "text",
+      "visible": true,
+      "freezeLabel": "Juego",
+      "sortableField": "juego"
+    },
+    {
+      "col": 3,
+      "field": "rank",
+      "label": "Rank",
+      "type": "number",
+      "visible": true,
+      "freezeLabel": "Rank",
+      "sortableField": "rank"
+    },
+    {
+      "col": 4,
+      "field": "complejidad",
+      "label": "Complejidad",
+      "type": "number",
+      "visible": true,
+      "freezeLabel": "Complejidad",
+      "sortableField": "complejidad"
+    },
+    {
+      "col": 5,
+      "field": "trata",
+      "label": "¿De qué trata?",
+      "type": "text",
+      "visible": true,
+      "freezeLabel": "¿De qué trata?",
+      "sortableField": "trata"
+    },
+    {
+      "col": 6,
+      "field": "calificacion",
+      "label": "Calificación",
+      "type": "number",
+      "visible": false,
+      "freezeLabel": "Calificación",
+      "sortableField": "calificacion"
+    },
+    {
+      "col": 7,
+      "field": "recomm_players",
+      "label": "Recomm Players",
+      "type": "number",
+      "visible": true,
+      "freezeLabel": "Recomm Players",
+      "sortableField": "recomm_players"
+    },
+    {
+      "col": 8,
+      "field": "maxplayers",
+      "label": "Max Players",
+      "type": "number",
+      "visible": true,
+      "freezeLabel": "Max Players",
+      "sortableField": "maxplayers"
+    },
+    {
+      "col": 9,
+      "field": "minplaytime",
+      "label": "Min Playtime",
+      "type": "number",
+      "visible": true,
+      "freezeLabel": "Min Playtime",
+      "sortableField": "minplaytime"
+    },
+    {
+      "col": 10,
+      "field": "maxplaytime",
+      "label": "Max Playtime",
+      "type": "number",
+      "visible": true,
+      "freezeLabel": "Max Playtime",
+      "sortableField": "maxplaytime"
+    },
+    {
+      "col": 11,
+      "field": "minplayers",
+      "label": "Min Players",
+      "type": "number",
+      "visible": true,
+      "freezeLabel": "Min Players",
+      "sortableField": "minplayers"
+    },
+    {
+      "col": 12,
+      "field": "categoria",
+      "label": "Cat. Principal",
+      "type": "category",
+      "visible": true,
+      "freezeLabel": "Cat. Principal",
+      "sortableField": "categoria"
+    },
+    {
+      "col": 13,
+      "field": "categoria2",
+      "label": "Cat. Secundaria",
+      "type": "category",
+      "visible": true,
+      "freezeLabel": "Cat. Secundaria",
+      "sortableField": "categoria2"
+    },
+    {
+      "col": 14,
+      "field": "categoria3",
+      "label": "Cat. Terciaria",
+      "type": "category",
+      "visible": true,
+      "freezeLabel": "Cat. Terciaria",
+      "sortableField": "categoria3"
+    },
+    {
+      "col": 15,
+      "field": "se_jugar",
+      "label": "Sé jugarlo",
+      "type": "status",
+      "visible": true,
+      "freezeLabel": "Sé jugarlo",
+      "sortableField": "se_jugar"
+    }
+  ],
+  "filters": [
+    {
+      "inputId": "filter-rank",
+      "sliderId": "slider-rank",
+      "operatorId": "filter-rank-op",
+      "field": "rank",
+      "type": "number"
+    },
+    {
+      "inputId": "filter-complejidad",
+      "sliderId": "slider-complejidad",
+      "operatorId": "filter-complejidad-op",
+      "field": "complejidad",
+      "type": "number",
+      "minOverride": 1
+    },
+    {
+      "inputId": "filter-minplayers",
+      "sliderId": "slider-minplayers",
+      "operatorId": "filter-minplayers-op",
+      "field": "minplayers",
+      "type": "number"
+    },
+    {
+      "inputId": "filter-maxplayers",
+      "sliderId": "slider-maxplayers",
+      "operatorId": "filter-maxplayers-op",
+      "field": "maxplayers",
+      "type": "number"
+    },
+    {
+      "inputId": "filter-maxplaytime",
+      "sliderId": "slider-maxplaytime",
+      "operatorId": "filter-maxplaytime-op",
+      "field": "maxplaytime",
+      "type": "number"
+    }
+  ]
+}
