@@ -1,0 +1,94 @@
+{
+  "Abstracto": {
+    "desc": "Información perfecta y sin azar; el reto es puramente mental y espacial.",
+    "ejemplo": "Visualizar tres movimientos por adelantado para rodear una ficha enemiga."
+  },
+  "Bazas": {
+    "desc": "Gestión de jerarquías numéricas o de \"palos\" para ganar el control de la mesa ronda a ronda.",
+    "ejemplo": "Guardar tu carta de triunfo (as) para capturar los puntos de los rivales en el momento clave."
+  },
+  "Colección de Sets": {
+    "desc": "Reconocimiento de patrones para agrupar ítems específicos que valen más juntos que separados.",
+    "ejemplo": "Ignorar una carta valiosa solitaria para buscar la tercera carta verde que completa tu trío."
+  },
+  "Colocación de Fichas": {
+    "desc": "Construcción progresiva del terreno de juego encajando piezas geométricas.",
+    "ejemplo": "Gestionar el espacio del tablero para colocar una loseta que te da puntos extra por cada loseta adyacente."
+  },
+  "Colocación de Decks": {
+    "desc": "Optimización de probabilidades reciclando tu propia pila de descarte con mejores cartas.",
+    "ejemplo": "Comprar una carta que te permite robar dos cartas extra cada vez que vuelva a salir."
+  },
+  "Construcción de Motores": {
+    "desc": "Inversión exponencial: creas una infraestructura que produce más recursos automáticamente.",
+    "ejemplo": "Usar el hierro que produjiste en el turno 1 para construir una mina que te dará el doble en el turno 2."
+  },
+  "Cooperativo": {
+    "desc": "Coordinación grupal y sacrificio individual para vencer a la inteligencia artificial del juego.",
+    "ejemplo": "Debatir quién debe gastar su carta curativa para salvar al equipo de perder la partida."
+  },
+  "Dados": {
+    "desc": "Gestión de probabilidades y mitigación del azar mediante resultados numéricos aleatorios.",
+    "ejemplo": "Relanzar un dado esperando un \"6\", sabiendo que si sale un \"1\" pierdes el turno."
+  },
+  "Deducción Social": {
+    "desc": "Lectura de lenguaje corporal y análisis lógico para encontrar discrepancias en los relatos.",
+    "ejemplo": "Notar que un amigo está demasiado callado y acusarlo de ser el traidor ante el grupo."
+  },
+  "Destreza": {
+    "desc": "Control de motricidad fina y pulso en un entorno físico real.",
+    "ejemplo": "Colocar una pieza de madera con mucho cuidado en una torre inestable sin respirar."
+  },
+  "Draft": {
+    "desc": "Selección táctica de recursos limitados, negando oportunidades a los rivales al mismo tiempo.",
+    "ejemplo": "Quedarte con la única carta que necesita tu vecino para completar su jugada, aunque a ti no te sirva."
+  },
+  "Economía": {
+    "desc": "Balance eficiente entre ingresos, gastos e inversiones para maximizar el capital.",
+    "ejemplo": "Pedir un préstamo en el juego para comprar una fábrica antes de que suba de precio."
+  },
+  "Estrategia": {
+    "desc": "Planificación a largo plazo priorizando la victoria final sobre las ganancias inmediatas.",
+    "ejemplo": "Perder una batalla pequeña a propósito para posicionar tus tropas en un lugar mejor."
+  },
+  "Familiar": {
+    "desc": "Accesibilidad universal con reglas que equilibran la habilidad y la suerte para nivelar el campo.",
+    "ejemplo": "Jugar una carta de efecto simple que cambia el líder de la partida instantáneamente."
+  },
+  "Faroleo": {
+    "desc": "Psicología inversa y engaño directo para intimidar o confundir a los oponentes.",
+    "ejemplo": "Subir la apuesta con una sonrisa confiada aunque tengas las peores cartas de la mesa."
+  },
+  "Fiesta": {
+    "desc": "Generación de caos controlado y dinámicas sociales rápidas para romper el hielo.",
+    "ejemplo": "Gritar una respuesta absurda rápidamente antes de que se acabe el tiempo."
+  },
+  "Gestión de Mano": {
+    "desc": "Administración de recursos (cartas) limitados, decidiendo cuándo es el momento óptimo de gastarlos.",
+    "ejemplo": "Aguantar una carta defensiva durante 5 turnos esperando el ataque final del oponente."
+  },
+  "Juego de Cartas": {
+    "desc": "Uso de naipes como vehículo principal para ejecutar todas las reglas y mecánicas.",
+    "ejemplo": "Barajar el mazo y repartir una nueva mano para reiniciar las opciones tácticas."
+  },
+  "Tentando a la Suerte": {
+    "desc": "Evaluación de riesgo/recompensa donde la avaricia puede llevar a perderlo todo.",
+    "ejemplo": "Decidir sacar \"solo una carta más\" del mazo, arriesgándote a que salga la bomba que te elimina."
+  },
+  "Memoria": {
+    "desc": "Retención y evocación de información visual o espacial para tomar decisiones informadas.",
+    "ejemplo": "Recordar la ubicación de las fichas volteadas para hacer pares en el menor número de turnos."
+  },
+  "Palabras": {
+    "desc": "Formación de vocablos a partir de letras limitadas para maximizar puntos y bloquear rivales.",
+    "ejemplo": "Colocar una palabra larga que cruce varias palabras ya existentes en el tablero."
+  },
+  "Take That (Ataque)": {
+    "desc": "Mecánica donde los jugadores pueden atacar o perjudicar a otros directamente.",
+    "ejemplo": "Usar una carta que obliga a otro jugador a arriesgar perder su estrategia."
+  },
+  "GAMBLING": {
+    "desc": "<img src=\"https://media.tenor.com/xy2XPgbXW7cAAAAM/bumbur95-gamba.gif\" alt=\"GAMBLING\" style=\"max-width: 100%; height: auto;\">",
+    "ejemplo": "LET'S GO GAMBLING!!!"
+  }
+}
