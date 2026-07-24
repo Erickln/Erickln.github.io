@@ -199,8 +199,8 @@ const games = [
         "maxplaytime": "45",
         "minplayers": "1",
         "categoria": "Estrategia",
-        "categoria2": "Colocación de Fichas",
-        "categoria3": "Patrones",
+        "categoria2": "Colocación de Losetas",
+        "categoria3": "Abstracto",
         "se_jugar": "Sí"
     },
     {
@@ -217,7 +217,7 @@ const games = [
         "minplayers": "1",
         "categoria": "Estrategia",
         "categoria2": "Construcción de Mazos",
-        "categoria3": "Colocación de Trabajadores",
+        "categoria3": "Gestión de Mano",
         "se_jugar": "No"
     },
     {
