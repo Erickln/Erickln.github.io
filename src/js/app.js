@@ -493,7 +493,7 @@ function calculateSliderRanges() {
 }
 
 async function loadJsonResource(url) {
-    const inlineId = url === 'games.json' ? 'games-data' : url === 'categories.json' ? 'categories-data' : url === 'collection-config.json' ? 'collection-config-data' : null;
+    const inlineId = url === 'data/games.json' ? 'games-data' : url === 'data/categories.json' ? 'categories-data' : url === 'data/collection-config.json' ? 'collection-config-data' : null;
     if (inlineId) {
         const inlineScript = document.getElementById(inlineId);
         if (inlineScript && inlineScript.textContent.trim()) {
@@ -530,12 +530,12 @@ async function loadJsonResource(url) {
 }
 
 async function loadGames() {
-    return loadJsonResource('games.json');
+    return loadJsonResource('data/games.json');
 }
 
 async function loadCollectionConfig() {
     try {
-        const loadedConfig = await loadJsonResource('collection-config.json');
+        const loadedConfig = await loadJsonResource('data/collection-config.json');
         collectionConfig = {
             ...cloneDefaultCollectionConfig(),
             ...loadedConfig,
@@ -952,7 +952,7 @@ async function loadCategoryDescriptions() {
             return;
         }
 
-        categoryDescriptions = await loadJsonResource('categories.json');
+        categoryDescriptions = await loadJsonResource('data/categories.json');
     } catch (error) {
         console.error('No se pudieron cargar las descripciones de categorías:', error);
         categoryDescriptions = {};

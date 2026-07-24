@@ -64,11 +64,15 @@ Facilitar la selección de juegos de mesa según las necesidades del momento:
 
 ```
 ├── index.html      # Estructura principal de la página
-├── styles.css      # Estilos y diseño responsivo
-├── script.js       # Lógica de filtros, ordenamiento y renderizado
-├── collection-config.json # Preset editable de columnas, filtros y categorías
-├── games.json      # Base de datos de juegos (array JSON)
-├── categories.json # Descripciones de categorías
+├── src/
+│   ├── css/
+│   │   └── styles.css      # Estilos y diseño responsivo
+│   └── js/
+│       └── app.js          # Lógica de filtros, ordenamiento y renderizado
+├── data/
+│   ├── collection-config.json # Preset editable de columnas, filtros y categorías
+│   ├── games.json             # Base de datos de juegos (array JSON)
+│   └── categories.json        # Descripciones de categorías
 ├── README.md       # Documentación del proyecto
 └── LICENSE         # Licencia del proyecto
 ```
@@ -91,7 +95,7 @@ Facilitar la selección de juegos de mesa según las necesidades del momento:
 
 ## 📝 Agregar Nuevos Juegos
 
-Para agregar juegos, edita el archivo `games.json` siguiendo esta estructura:
+Para agregar juegos, edita el archivo `data/games.json` siguiendo esta estructura:
 
 ```javascript
 {
@@ -117,15 +121,15 @@ Para agregar juegos, edita el archivo `games.json` siguiendo esta estructura:
 
 La versión que ves aquí se mantiene como el preset por defecto. Para crear tu propia colección sin perder esta base:
 
-1. Copia `collection-config.json` y úsalo como plantilla para cambiar el nombre de la colección, las columnas visibles, los labels y los filtros.
-2. Edita `games.json` para reemplazar o ampliar la lista de juegos.
-3. Edita `categories.json` para cambiar o ampliar las descripciones de categorías.
+1. Copia `data/collection-config.json` y úsalo como plantilla para cambiar el nombre de la colección, las columnas visibles, los labels y los filtros.
+2. Edita `data/games.json` para reemplazar o ampliar la lista de juegos.
+3. Edita `data/categories.json` para cambiar o ampliar las descripciones de categorías.
 4. Si abres `index.html` directamente, la aplicación seguirá funcionando porque el preset viene embebido dentro del archivo.
 5. Si sirves el proyecto por HTTP, también puede leer los archivos JSON externos como fuente editable.
 
 ### Qué puedes cambiar sin romper el preset
 
-- Renombrar columnas en `collection-config.json`.
+- Renombrar columnas en `data/collection-config.json`.
 - Ocultar o mostrar columnas mediante `defaultHiddenColumns`.
 - Cambiar las etiquetas de categorías en `categoryFields`.
 - Ajustar los campos numéricos usados por los filtros y colores.
@@ -133,7 +137,7 @@ La versión que ves aquí se mantiene como el preset por defecto. Para crear tu 
 ### Qué conviene conservar
 
 - Los campos base del juego (`juego`, `imagen`, `rank`, `complejidad`, `trata`, `calificacion`, `recomm_players`, `maxplayers`, `minplaytime`, `maxplaytime`, `minplayers`, `categoria`, `categoria2`, `categoria3`, `se_jugar`) mientras uses esta versión del tablero.
-- El nombre de archivo de `games.json` y `categories.json` si quieres seguir usando el cargador actual sin cambios.
+- El nombre de archivo de `data/games.json`, `data/categories.json` y `data/collection-config.json` si quieres seguir usando el cargador actual sin cambios.
 
 ## 🎮 Categorías Disponibles
 
