@@ -1,4 +1,4 @@
-const games = [
+[
     {
         "juego": "7 Wonders Duel",
         "imagen": "https://cf.geekdo-images.com/zdagMskTF7wJBPjX74XsRw__square@2x/img/18sI3DQbHoswa4j69WJROdLmsCE=/150x150/filters:strip_icc()/pic2576399.jpg",
@@ -732,4 +732,4 @@ const games = [
         "se_jugar": "No"
     }
 
-];
+]

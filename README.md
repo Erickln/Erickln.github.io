@@ -66,7 +66,7 @@ Facilitar la selección de juegos de mesa según las necesidades del momento:
 ├── index.html      # Estructura principal de la página
 ├── styles.css      # Estilos y diseño responsivo
 ├── script.js       # Lógica de filtros, ordenamiento y renderizado
-├── games.js        # Base de datos de juegos (array de objetos)
+├── games.json      # Base de datos de juegos (array JSON)
 ├── README.md       # Documentación del proyecto
 └── LICENSE         # Licencia del proyecto
 ```
@@ -89,7 +89,7 @@ Facilitar la selección de juegos de mesa según las necesidades del momento:
 
 ## 📝 Agregar Nuevos Juegos
 
-Para agregar juegos, edita el archivo `games.js` siguiendo esta estructura:
+Para agregar juegos, edita el archivo `games.json` siguiendo esta estructura:
 
 ```javascript
 {

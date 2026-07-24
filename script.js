@@ -1,5 +1,5 @@
-// Los datos de los juegos se cargan desde games.js
-let filteredGames = [...games];
+let games = [];
+let filteredGames = [];
 let currentSort = { field: null, ascending: true };
 let categoryDescriptions = {};
 
@@ -149,7 +149,7 @@ function calculateColorRanges() {
     return ranges;
 }
 
-const colorRanges = calculateColorRanges();
+let colorRanges = null;
 
 // Renderizar la tabla
 function renderTable() {
@@ -416,6 +416,14 @@ function calculateSliderRanges() {
             input.placeholder = min;
         }
     });
+}
+
+async function loadGames() {
+    const response = await fetch('games.json');
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json();
 }
 
 // Sincronizar slider con input
@@ -779,6 +787,15 @@ async function loadCategoryDescriptions() {
 
 // Inicializar sliders, dropdown de categorías y ordenar por Juego al cargar
 (async function init() {
+    try {
+        games = await loadGames();
+    } catch (error) {
+        console.error('No se pudieron cargar los juegos:', error);
+        games = [];
+    }
+
+    filteredGames = [...games];
+    colorRanges = calculateColorRanges();
     await loadCategoryDescriptions();
     calculateSliderRanges();
     populateCategoryDropdown();
