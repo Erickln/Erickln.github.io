@@ -418,12 +418,45 @@ function calculateSliderRanges() {
     });
 }
 
-async function loadGames() {
-    const response = await fetch('games.json');
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+async function loadJsonResource(url) {
+    const inlineId = url === 'games.json' ? 'games-data' : url === 'categories.json' ? 'categories-data' : null;
+    if (inlineId) {
+        const inlineScript = document.getElementById(inlineId);
+        if (inlineScript && inlineScript.textContent.trim()) {
+            return JSON.parse(inlineScript.textContent);
+        }
     }
-    return response.json();
+
+    if (window.location.protocol !== 'file:') {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    }
+
+    return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+        request.open('GET', url, true);
+        request.overrideMimeType('application/json');
+        request.onload = () => {
+            if (request.status === 0 || (request.status >= 200 && request.status < 300)) {
+                try {
+                    resolve(JSON.parse(request.responseText));
+                } catch (error) {
+                    reject(error);
+                }
+            } else {
+                reject(new Error(`HTTP ${request.status}`));
+            }
+        };
+        request.onerror = () => reject(new Error('Network error'));
+        request.send();
+    });
+}
+
+async function loadGames() {
+    return loadJsonResource('games.json');
 }
 
 // Sincronizar slider con input
@@ -774,11 +807,7 @@ closeInstructionsBtn.addEventListener('touchend', closeInstructions);
 
 async function loadCategoryDescriptions() {
     try {
-        const response = await fetch('categories.json');
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        categoryDescriptions = await response.json();
+        categoryDescriptions = await loadJsonResource('categories.json');
     } catch (error) {
         console.error('No se pudieron cargar las descripciones de categorías:', error);
         categoryDescriptions = {};
